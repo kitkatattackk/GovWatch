@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=390, initial-scale=1.0"/>
+<title>GovWatch - Home Feed</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  body { background: #0B0F1A; color: #F1F5F9; font-family: 'Inter', sans-serif; max-width: 390px; margin: 0 auto; min-height: 100vh; }
+  .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-size: 22px; }
+  ::-webkit-scrollbar { display: none; }
+  .tag-bills    { background: rgba(59,130,246,0.12); color: #93C5FD; border: 1px solid rgba(59,130,246,0.25); }
+  .tag-exec     { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.25); }
+  .tag-court    { background: rgba(167,139,250,0.12); color: #C4B5FD; border: 1px solid rgba(167,139,250,0.25); }
+  .tag-spending { background: rgba(52,211,153,0.12); color: #6EE7B7; border: 1px solid rgba(52,211,153,0.25); }
+</style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="flex items-center justify-between px-5 py-2 text-[11px] font-medium text-slate-500" style="background:#0B0F1A">
+  <span class="font-semibold text-slate-300">9:41</span>
+  <div class="flex items-center gap-2">
+    <span class="msym" style="font-size:13px">signal_cellular_alt</span>
+    <span class="msym" style="font-size:13px">wifi</span>
+    <span class="msym" style="font-size:13px">battery_5_bar</span>
+  </div>
+</div>
+
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-[#1A2235]" style="background:rgba(11,15,26,0.97);backdrop-filter:blur(12px)">
+  <div class="flex items-center gap-2.5">
+    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
+      <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
+    </div>
+    <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+  </div>
+  <div class="flex items-center gap-0.5">
+    <button class="p-2 rounded-full text-slate-400 active:bg-white/5">
+      <span class="msym">search</span>
+    </button>
+    <button class="p-2 rounded-full text-slate-400 active:bg-white/5 relative">
+      <span class="msym">notifications</span>
+      <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-[#0B0F1A]" style="background:#3B82F6"></span>
+    </button>
+  </div>
+</header>
+
+<!-- Filter Chips -->
+<div class="flex gap-2 px-4 py-3 overflow-x-auto" style="scrollbar-width:none">
+  <button class="rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap text-white" style="background:#2563EB">All</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap text-slate-400 border" style="background:#111827;border-color:#1E2A3B">Bills &amp; Votes</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap text-slate-400 border" style="background:#111827;border-color:#1E2A3B">Exec Orders</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap text-slate-400 border" style="background:#111827;border-color:#1E2A3B">Court Rulings</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap text-slate-400 border" style="background:#111827;border-color:#1E2A3B">Spending</button>
+</div>
+
+<!-- Feed -->
+<main class="px-4 pb-28 space-y-3">
+
+  <!-- Card 1 — Bills & Votes -->
+  <article class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <img src="https://ui-avatars.com/api/?name=Aaron+Parnas&background=162850&color=93c5fd&size=64&bold=true" class="w-8 h-8 rounded-full object-cover"/>
+        <div class="leading-none">
+          <span class="text-[13px] font-semibold text-white">Aaron Parnas</span>
+          <span class="text-[11px] text-slate-500"> · Legal &amp; Political</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-slate-500">14m ago</span>
+    </div>
+    <span class="tag-bills inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2.5">Bills &amp; Votes</span>
+    <h2 class="text-[15px] font-bold text-white leading-snug mb-2.5">Senate Passes $2.4T Infrastructure Revision with Key Clean Energy Provisions</h2>
+    <p class="text-[13px] leading-relaxed mb-3.5" style="color:#8899AA">
+      <span class="font-semibold text-xs" style="color:#60A5FA">AI Brief&nbsp;&nbsp;</span>The late-night vote secures funding for decentralized energy grids. The fine print redirects $400B from conventional highways to hydrogen transport hubs over the next decade, affecting 14 states.
+    </p>
+    <div class="flex items-center justify-between pt-3 border-t" style="border-color:#1A2235">
+      <button class="text-white text-xs font-semibold px-4 py-2 rounded-lg" style="background:#2563EB">Read Full Article</button>
+      <button class="text-slate-600 p-1">
+        <span class="msym">bookmark_border</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- Card 2 — Executive Orders -->
+  <article class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <img src="https://ui-avatars.com/api/?name=Sarah+Fischer&background=2d1a00&color=fcd34d&size=64&bold=true" class="w-8 h-8 rounded-full object-cover"/>
+        <div class="leading-none">
+          <span class="text-[13px] font-semibold text-white">Sarah Fischer</span>
+          <span class="text-[11px] text-slate-500"> · Media &amp; Politics</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-slate-500">2h ago</span>
+    </div>
+    <span class="tag-exec inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2.5">Executive Orders</span>
+    <h2 class="text-[15px] font-bold text-white leading-snug mb-2.5">New Executive Directive Mandates AI Oversight Protocols for All Federal Agencies</h2>
+    <p class="text-[13px] leading-relaxed mb-3.5" style="color:#8899AA">
+      <span class="font-semibold text-xs" style="color:#60A5FA">AI Brief&nbsp;&nbsp;</span>The administration ordered a full audit of algorithmic decision-making tools across the DOJ. This pivot prioritizes "human-in-the-loop" safeguards, signaling a major regulatory shift for 2025.
+    </p>
+    <div class="flex items-center justify-between pt-3 border-t" style="border-color:#1A2235">
+      <button class="text-white text-xs font-semibold px-4 py-2 rounded-lg" style="background:#2563EB">Read Full Article</button>
+      <button class="text-slate-600 p-1">
+        <span class="msym">bookmark_border</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- Card 3 — Court Rulings -->
+  <article class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <img src="https://ui-avatars.com/api/?name=Casey+Newton&background=1e1030&color=c4b5fd&size=64&bold=true" class="w-8 h-8 rounded-full object-cover"/>
+        <div class="leading-none">
+          <span class="text-[13px] font-semibold text-white">Casey Newton</span>
+          <span class="text-[11px] text-slate-500"> · Platform Intelligence</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-slate-500">5h ago</span>
+    </div>
+    <span class="tag-court inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2.5">Court Rulings</span>
+    <h2 class="text-[15px] font-bold text-white leading-snug mb-2.5">Appellate Court Reinstates Corporate Transparency Act Requirements for Small Businesses</h2>
+    <p class="text-[13px] leading-relaxed mb-3.5" style="color:#8899AA">
+      <span class="font-semibold text-xs" style="color:#60A5FA">AI Brief&nbsp;&nbsp;</span>The 11th Circuit stayed a lower court injunction, restoring small business reporting requirements. Filing deadlines remain March 31st for existing entities — non-compliance carries escalating daily penalties.
+    </p>
+    <div class="flex items-center justify-between pt-3 border-t" style="border-color:#1A2235">
+      <button class="text-white text-xs font-semibold px-4 py-2 rounded-lg" style="background:#2563EB">Read Full Article</button>
+      <button class="text-slate-600 p-1">
+        <span class="msym">bookmark_border</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- Card 4 — Government Spending -->
+  <article class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <img src="https://ui-avatars.com/api/?name=Emily+Peck&background=0a1e15&color=6ee7b7&size=64&bold=true" class="w-8 h-8 rounded-full object-cover"/>
+        <div class="leading-none">
+          <span class="text-[13px] font-semibold text-white">Emily Peck</span>
+          <span class="text-[11px] text-slate-500"> · Economics &amp; Policy</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-slate-500">Yesterday</span>
+    </div>
+    <span class="tag-spending inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2.5">Government Spending</span>
+    <h2 class="text-[15px] font-bold text-white leading-snug mb-2.5">Unallocated $12B Defense Surplus Redirected to National Cyber-Shield Initiative</h2>
+    <p class="text-[13px] leading-relaxed mb-3.5" style="color:#8899AA">
+      <span class="font-semibold text-xs" style="color:#60A5FA">AI Brief&nbsp;&nbsp;</span>An unexpected surplus from naval hardware procurement has been redirected to municipal ransomware defenses. Funding follows last month's multi-state infrastructure breach affecting 9 major cities.
+    </p>
+    <div class="flex items-center justify-between pt-3 border-t" style="border-color:#1A2235">
+      <button class="text-white text-xs font-semibold px-4 py-2 rounded-lg" style="background:#2563EB">Read Full Article</button>
+      <button class="text-slate-600 p-1">
+        <span class="msym">bookmark_border</span>
+      </button>
+    </div>
+  </article>
+
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235;max-width:390px;margin:0 auto">
+  <div class="flex justify-around items-center">
+    <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
+      <span class="msym" style="font-variation-settings:'FILL' 1">home</span>
+      <span class="text-[10px] font-semibold">Home</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">auto_stories</span>
+      <span class="text-[10px] font-medium">Digest</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">group</span>
+      <span class="text-[10px] font-medium">Authors</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">notifications</span>
+      <span class="text-[10px] font-medium">Alerts</span>
+    </a>
+  </div>
+</nav>
+
+</body>
+</html>

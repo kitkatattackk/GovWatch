@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=390, initial-scale=1.0"/>
+<title>GovWatch - Home Feed</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  body { background: #0B0F1A; color: #F1F5F9; font-family: 'Inter', sans-serif; max-width: 390px; margin: 0 auto; min-height: 100vh; }
+  .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-size: 22px; }
+  ::-webkit-scrollbar { display: none; }
+  .tag-bills_votes        { background: rgba(59,130,246,0.12); color: #93C5FD; border: 1px solid rgba(59,130,246,0.25); }
+  .tag-executive_orders   { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.25); }
+  .tag-court_rulings      { background: rgba(167,139,250,0.12); color: #C4B5FD; border: 1px solid rgba(167,139,250,0.25); }
+  .tag-government_spending { background: rgba(52,211,153,0.12); color: #6EE7B7; border: 1px solid rgba(52,211,153,0.25); }
+  .tag-opinion            { background: rgba(251,113,133,0.12); color: #FDA4AF; border: 1px solid rgba(251,113,133,0.25); }
+  .tag-default            { background: rgba(148,163,184,0.12); color: #94A3B8; border: 1px solid rgba(148,163,184,0.25); }
+  .chip-active  { background: #2563EB; color: #fff; }
+  .chip-inactive { background: #111827; color: #64748B; border: 1px solid #1E2A3B; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .skeleton { background: #1A2235; border-radius: 8px; animation: pulse 1.5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="flex items-center justify-between px-5 py-2 text-[11px] font-medium text-slate-500" style="background:#0B0F1A">
+  <span class="font-semibold text-slate-300" id="clock">9:41</span>
+  <div class="flex items-center gap-2">
+    <span class="msym" style="font-size:13px">signal_cellular_alt</span>
+    <span class="msym" style="font-size:13px">wifi</span>
+    <span class="msym" style="font-size:13px">battery_5_bar</span>
+  </div>
+</div>
+
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-[#1A2235]" style="background:rgba(11,15,26,0.97);backdrop-filter:blur(12px)">
+  <div class="flex items-center gap-2.5">
+    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
+      <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
+    </div>
+    <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+  </div>
+  <div class="flex items-center gap-0.5">
+    <button class="p-2 rounded-full text-slate-400 active:bg-white/5">
+      <span class="msym">search</span>
+    </button>
+    <button class="p-2 rounded-full text-slate-400 active:bg-white/5 relative">
+      <span class="msym">notifications</span>
+      <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-[#0B0F1A]" style="background:#3B82F6"></span>
+    </button>
+  </div>
+</header>
+
+<!-- Filter Chips -->
+<div class="flex gap-2 px-4 py-3 overflow-x-auto" style="scrollbar-width:none" id="chips">
+  <button class="rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap chip-active" data-cat="">All</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="bills_votes">Bills &amp; Votes</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="executive_orders">Exec Orders</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="court_rulings">Court Rulings</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="government_spending">Spending</button>
+  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="opinion">Opinion</button>
+</div>
+
+<!-- Feed -->
+<main class="px-4 pb-28 space-y-3" id="feed">
+  <!-- Skeleton loaders -->
+  <div class="skeleton h-48 w-full"></div>
+  <div class="skeleton h-48 w-full"></div>
+  <div class="skeleton h-48 w-full"></div>
+</main>
+
+<!-- Error Banner (hidden by default) -->
+<div id="error-banner" class="hidden mx-4 mt-2 p-3 rounded-xl text-sm text-red-300 border border-red-900/50" style="background:rgba(127,29,29,0.3)">
+  <span class="msym align-middle mr-1" style="font-size:16px">error_outline</span>
+  Couldn't load articles. Is the backend running on port 3000?
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235;max-width:390px;margin:0 auto">
+  <div class="flex justify-around items-center">
+    <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
+      <span class="msym" style="font-variation-settings:'FILL' 1">home</span>
+      <span class="text-[10px] font-semibold">Home</span>
+    </a>
+    <a href="../connected_daily_digest/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">auto_stories</span>
+      <span class="text-[10px] font-medium">Digest</span>
+    </a>
+    <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">group</span>
+      <span class="text-[10px] font-medium">Authors</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <span class="msym">notifications</span>
+      <span class="text-[10px] font-medium">Alerts</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+const API = 'http://localhost:3000';
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.getHours().toString().padStart(2,'0') + ':' +
+    now.getMinutes().toString().padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// Relative time
+function relativeTime(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)  return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  return `${days}d ago`;
+}
+
+// Category display info
+const CAT_INFO = {
+  bills_votes:         { label: 'Bills & Votes',  cls: 'tag-bills_votes' },
+  executive_orders:    { label: 'Exec Orders',     cls: 'tag-executive_orders' },
+  court_rulings:       { label: 'Court Rulings',   cls: 'tag-court_rulings' },
+  government_spending: { label: 'Spending',         cls: 'tag-government_spending' },
+  opinion:             { label: 'Opinion',          cls: 'tag-opinion' },
+};
+
+// Avatar colors by source
+const SOURCE_COLORS = {
+  congress:        { bg: '162850', fg: '93c5fd' },
+  federalregister: { bg: '2d1a00', fg: 'fcd34d' },
+  courtlistener:   { bg: '1e1030', fg: 'c4b5fd' },
+  usaspending:     { bg: '0a1e15', fg: '6ee7b7' },
+  substack:        { bg: '1a0a2e', fg: 'fda4af' },
+};
+
+function avatarUrl(name, source) {
+  const c = SOURCE_COLORS[source] || { bg: '111827', fg: '94a3b8' };
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${c.bg}&color=${c.fg}&size=64&bold=true`;
+}
+
+function sourceLabel(article) {
+  if (article.author_name) return article.author_name;
+  const map = {
+    congress: 'Congress.gov',
+    federalregister: 'Federal Register',
+    courtlistener: 'CourtListener',
+    usaspending: 'USASpending',
+  };
+  return map[article.source] || article.source;
+}
+
+function renderCard(article) {
+  const cat = article.category || 'default';
+  const info = CAT_INFO[cat] || { label: cat, cls: 'tag-default' };
+  const name = sourceLabel(article);
+  const avatar = avatarUrl(name, article.source);
+  const time = relativeTime(article.published_at || article.created_at);
+  const brief = article.ai_brief || article.content?.slice(0, 160) || '';
+  const url = article.source_url || '#';
+
+  return `
+  <article class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <img src="${avatar}" class="w-8 h-8 rounded-full object-cover" onerror="this.style.display='none'"/>
+        <div class="leading-none">
+          <span class="text-[13px] font-semibold text-white">${escHtml(name)}</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-slate-500">${time}</span>
+    </div>
+    <span class="${info.cls} inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2.5">${info.label}</span>
+    <h2 class="text-[15px] font-bold text-white leading-snug mb-2.5">${escHtml(article.title)}</h2>
+    ${brief ? `<p class="text-[13px] leading-relaxed mb-3.5" style="color:#8899AA">
+      <span class="font-semibold text-xs" style="color:#60A5FA">AI Brief&nbsp;&nbsp;</span>${escHtml(brief)}
+    </p>` : ''}
+    <div class="flex items-center justify-between pt-3 border-t" style="border-color:#1A2235">
+      <a href="../connected_article_detail/code.html?id=${article.id}" class="text-white text-xs font-semibold px-4 py-2 rounded-lg" style="background:#2563EB">Read Full Article</a>
+      <button class="text-slate-600 p-1">
+        <span class="msym">bookmark_border</span>
+      </button>
+    </div>
+  </article>`;
+}
+
+function escHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let currentCategory = '';
+
+async function loadFeed(category = '') {
+  const feed = document.getElementById('feed');
+  const errorBanner = document.getElementById('error-banner');
+
+  // Show skeletons
+  feed.innerHTML = `
+    <div class="skeleton h-48 w-full"></div>
+    <div class="skeleton h-48 w-full"></div>
+    <div class="skeleton h-48 w-full"></div>
+  `;
+  errorBanner.classList.add('hidden');
+
+  try {
+    const url = category
+      ? `${API}/api/feed?category=${category}&page_size=30`
+      : `${API}/api/feed?page_size=30`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const articles = data.articles || [];
+
+    if (articles.length === 0) {
+      feed.innerHTML = `
+        <div class="text-center py-16 text-slate-500">
+          <span class="msym block mx-auto mb-2" style="font-size:36px">inbox</span>
+          <p class="text-sm">No articles yet. Try polling the backend.</p>
+        </div>`;
+      return;
+    }
+
+    feed.innerHTML = articles.map(renderCard).join('');
+  } catch (err) {
+    console.error(err);
+    feed.innerHTML = '';
+    errorBanner.classList.remove('hidden');
+  }
+}
+
+// Filter chips
+document.getElementById('chips').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-cat]');
+  if (!btn) return;
+
+  document.querySelectorAll('#chips button').forEach(b => {
+    b.className = 'rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive';
+  });
+  btn.className = 'rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap chip-active';
+
+  currentCategory = btn.dataset.cat;
+  loadFeed(currentCategory);
+});
+
+// Initial load
+loadFeed();
+</script>
+
+</body>
+</html>

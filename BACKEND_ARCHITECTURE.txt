@@ -1,0 +1,94 @@
+================================================================================
+  GOVWATCH — BACKEND ARCHITECTURE
+================================================================================
+
+DATA SOURCES
+────────────────────────────────────────────────────────────────────────────────
+
+  Author Articles (Substack RSS)
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  Every Substack has a public RSS feed — no API key required.            │
+  │  Format:  https://[author].substack.com/feed                            │
+  │  Example: https://aaronparnas.substack.com/feed                         │
+  │  Returns: title, full content, author, publish date                     │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Government Actions
+  ┌──────────────────────┬─────────────────────────────┬────────────────────┐
+  │ Category             │ Source                      │ API                │
+  ├──────────────────────┼─────────────────────────────┼────────────────────┤
+  │ Bills & Votes        │ Congress.gov                │ api.congress.gov   │
+  │                      │                             │ /v3/bill           │
+  │                      │                             │ (free key req'd)   │
+  ├──────────────────────┼─────────────────────────────┼────────────────────┤
+  │ Executive Orders     │ Federal Register            │ federalregister    │
+  │                      │                             │ .gov/api/v1/       │
+  │                      │                             │ (no key needed)    │
+  ├──────────────────────┼─────────────────────────────┼────────────────────┤
+  │ Court Rulings        │ CourtListener               │ courtlistener      │
+  │                      │ (Free Law Project)          │ .com/api/          │
+  │                      │                             │ (free)             │
+  ├──────────────────────┼─────────────────────────────┼────────────────────┤
+  │ Government Spending  │ USASpending.gov             │ api.usaspending    │
+  │                      │                             │ .gov               │
+  │                      │                             │ (no key needed)    │
+  └──────────────────────┴─────────────────────────────┴────────────────────┘
+
+  AI Briefs (Claude API)
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  On ingest of each new article/document, call Claude API to generate    │
+  │  a 2–3 sentence summary. Runs once per item at ingest time — not on     │
+  │  every app request. Store the brief alongside the article in Postgres.  │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+SYSTEM DIAGRAM
+────────────────────────────────────────────────────────────────────────────────
+
+  [Data Sources]              [Backend]              [Storage]      [Client]
+
+  Substack RSS feeds  ──┐
+  Congress.gov API    ──┤──►  Node.js service  ──►  Postgres  ──►  REST API
+  Federal Register    ──┤     Cron jobs                              │
+  CourtListener       ──┤     (every 15–30 min)                      ▼
+  USASpending.gov     ──┘     + Claude API                        Mobile App
+                              (brief generation)
+
+
+BACKEND BUILD ORDER
+────────────────────────────────────────────────────────────────────────────────
+
+  Phase 1 — Core Ingestion
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  1. Substack RSS poller (fetch + parse XML for followed authors)        │
+  │  2. Congress.gov bill watcher (new bills + vote outcomes)               │
+  │  3. Claude brief generator (summarize on ingest)                        │
+  │  4. Postgres schema (articles, authors, categories, briefs)             │
+  │  5. REST API — GET /feed, GET /digest                                   │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Phase 2 — Remaining Gov APIs
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  6.  Federal Register poller (executive orders)                         │
+  │  7.  CourtListener watcher (court rulings)                              │
+  │  8.  USASpending.gov poller (spending actions)                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Phase 3 — Push + Auth
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  9.  User accounts + author follow preferences                          │
+  │  10. Push notification delivery (Firebase Cloud Messaging)              │
+  │  11. Daily Digest scheduler (morning batch summary)                     │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+NOTES
+────────────────────────────────────────────────────────────────────────────────
+
+  - Deduplication: hash article URL or gov document ID before inserting
+  - Rate limits: Congress.gov allows 5,000 req/hr on free tier
+  - CourtListener has a generous free tier; paid tier for high volume
+  - Claude brief generation: use claude-haiku-4-5 for cost efficiency at scale
+  - All external API keys live in .env — never committed to git
+
+================================================================================

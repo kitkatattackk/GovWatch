@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Public_Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00E5FF",
+                        "on-primary": "#00373F",
+                        "surface": "#05070A",
+                        "surface-container": "#0B0E14",
+                        "outline": "#434656",
+                        "on-surface": "#E2E2E8",
+                        "on-surface-variant": "#94A3B8"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope", "sans-serif"],
+                        "body": ["Public Sans", "sans-serif"],
+                        "label": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #05070A;
+            color: #E2E2E8;
+            background-image: radial-gradient(circle at 50% -20%, #00e5ff15 0%, transparent 50%);
+        }
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glow-badge {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary/30 selection:text-white">
+<!-- TopAppBar: GovWatch Components_8 -->
+<nav class="fixed top-0 w-full z-50 bg-cyan-950/40 flex items-center justify-between px-6 py-4 w-full shadow-[0_4px_30px_rgba(0,229,255,0.08)] backdrop-blur-[24px]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-400" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<h1 class="font-headline font-bold tracking-tight text-cyan-400 text-2xl font-black tracking-tighter">GovWatch</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:bg-white/10 transition-colors active:scale-95 duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-cyan-400/20">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSKPbyDNjHeVllo3vb9VpaonL33PO66VUJBt-2ZrPrQs_08SeR75fdJxqfmJr6mTWOFcsAka8XEn3yjWpk4IekT_sYipL3Gi_ERzLQW4PT4xmxv5zJBAKtnAauHHmwwW12F_utFHNYEBmh0B05w8jyzkhE8Xe3Zup7-W3hod1raTVZtaD9XYK0fHFQNFUU3DPOsl8aRIapLc6U3S1XUHbrwKNyQ0v__BblJeq1IxhIOO7T-5dmzZ8VIaxdCSABcwuDs9tKDLPIk3ea"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12 relative">
+<div class="flex flex-col gap-1">
+<span class="font-label text-[10px] font-bold tracking-[0.2em] text-primary uppercase">Tuesday, Oct 24</span>
+<h2 class="font-headline text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">Daily Digest</h2>
+</div>
+<p class="mt-4 text-on-surface-variant text-lg max-w-2xl leading-relaxed font-light">
+            Your sovereign summary of the last 24 hours in governance. <span class="text-white font-medium">42 critical updates</span> across 4 key sectors.
+        </p>
+</header>
+<!-- Bento Grid for Topics -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Category 1: Bills & Votes -->
+<section class="md:col-span-8 liquid-glass rounded-2xl p-6 transition-all border border-white/5 hover:border-primary/20">
+<div class="flex justify-between items-center mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-white tracking-tight">Bills &amp; Votes</h3>
+</div>
+<span class="glow-badge bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-extrabold font-label tracking-widest uppercase">12 UPDATES</span>
+</div>
+<div class="space-y-10">
+<!-- Entry -->
+<article class="group cursor-pointer relative">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/50 font-label">House Resolution 442</span>
+<span class="text-[10px] font-medium text-on-surface-variant/40">2h ago</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-white group-hover:text-primary transition-colors leading-snug">National Defense Authorization Act for Fiscal Year 2024 passes 217-213</h4>
+<p class="mt-3 text-on-surface-variant text-sm line-clamp-2 leading-relaxed font-light">The bill includes significant adjustments to procurement strategies and personnel compensation models, facing narrow opposition on specific climate-related riders.</p>
+</article>
+<!-- Entry -->
+<article class="group cursor-pointer relative">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/50 font-label">Senate Bill S.129</span>
+<span class="text-[10px] font-medium text-on-surface-variant/40">5h ago</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-white group-hover:text-primary transition-colors leading-snug">Energy Infrastructure Modernization Act moves to Floor Debate</h4>
+<p class="mt-3 text-on-surface-variant text-sm line-clamp-2 leading-relaxed font-light">Bipartisan committee approval for the $12B package aimed at hardening the national electrical grid against cyber threats and extreme weather events.</p>
+</article>
+</div>
+</section>
+<!-- Category 2: Court Rulings -->
+<section class="md:col-span-4 liquid-glass rounded-2xl p-6 transition-all border border-white/5">
+<div class="flex justify-between items-center mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-cyan-400/10 flex items-center justify-center border border-cyan-400/20">
+<span class="material-symbols-outlined text-cyan-400">balance</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-white tracking-tight">Rulings</h3>
+</div>
+<span class="glow-badge bg-cyan-400/10 text-cyan-400 px-3 py-1 rounded-full text-[10px] font-extrabold font-label tracking-widest uppercase">4 NEW</span>
+</div>
+<div class="space-y-10">
+<article class="group cursor-pointer">
+<span class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/50 font-label block mb-2">9th Circuit</span>
+<h4 class="font-headline text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">Digital Privacy Rights vs. Border Search Authority</h4>
+<div class="mt-4 p-4 bg-white/[0.03] rounded-xl border-l-4 border-cyan-400 backdrop-blur-md">
+<p class="text-xs text-on-surface italic leading-relaxed font-light">"The expectation of privacy in digital devices remains significant even at the functional equivalent of the border..."</p>
+</div>
+</article>
+<article class="group cursor-pointer">
+<span class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/50 font-label block mb-2">District Court</span>
+<h4 class="font-headline text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">Injunction Granted on Tech Merger Antitrust Case</h4>
+</article>
+</div>
+</section>
+<!-- Category 3: Government Spending -->
+<section class="md:col-span-5 liquid-glass rounded-2xl p-6 border border-white/5">
+<div class="flex justify-between items-center mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-white tracking-tight">Spending</h3>
+</div>
+<span class="glow-badge bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-extrabold font-label tracking-widest uppercase">8 ALLOCATIONS</span>
+</div>
+<div class="space-y-8">
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-xs font-bold text-white font-label tracking-wide uppercase">Infrastructure</span>
+<span class="text-sm font-bold text-primary">$4.2B</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[72%] shadow-[0_0_8px_#00E5FF]"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-xs font-bold text-white font-label tracking-wide uppercase">Public Health</span>
+<span class="text-sm font-bold text-on-surface-variant">$1.8B</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-white/20 w-[45%]"></div>
+</div>
+</div>
+<div class="pt-6 border-t border-white/5">
+<p class="text-[11px] text-on-surface-variant font-light italic leading-relaxed">Major contract awarded to Lockheed Martin for satellite surveillance systems ($850M).</p>
+</div>
+</div>
+</section>
+<!-- Category 4: Executive Orders -->
+<section class="md:col-span-7 liquid-glass rounded-2xl p-6 border border-primary/10">
+<div class="flex justify-between items-center mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-white tracking-tight">Executive Orders</h3>
+</div>
+<span class="glow-badge bg-primary/20 text-white px-3 py-1 rounded-full text-[10px] font-extrabold font-label tracking-widest uppercase">2 DIRECTIVES</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="bg-white/[0.04] p-6 rounded-2xl border border-white/5 hover:bg-white/[0.06] transition-colors group">
+<h4 class="font-headline font-bold text-white mb-3 group-hover:text-primary transition-colors">AI Safety Standards</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed font-light">Establishing new protocols for federal agency adoption of generative AI models and safety testing.</p>
+<button class="mt-6 text-[10px] font-bold text-primary uppercase tracking-[0.2em] flex items-center gap-2 group/btn">
+                        READ DIRECTIVE <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_right_alt</span>
+</button>
+</div>
+<div class="bg-white/[0.04] p-6 rounded-2xl border border-white/5 hover:bg-white/[0.06] transition-colors group">
+<h4 class="font-headline font-bold text-white mb-3 group-hover:text-primary transition-colors">Supply Chain Resilience</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed font-light">Directing the Department of Commerce to review critical mineral dependencies for semiconductor manufacturing.</p>
+<button class="mt-6 text-[10px] font-bold text-primary uppercase tracking-[0.2em] flex items-center gap-2 group/btn">
+                        READ DIRECTIVE <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_right_alt</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Data Pulse Feature: Modern High-Gloss Market Summary -->
+<section class="mt-12 liquid-glass p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
+<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+<div>
+<h3 class="font-headline text-2xl font-extrabold text-white tracking-tight">Market Reaction</h3>
+<p class="text-on-surface-variant text-sm mt-2 font-light">Impact of today's legislative moves on the Federal Bond Market.</p>
+</div>
+<div class="flex items-end gap-2 h-16">
+<div class="w-2 h-6 bg-primary/20 rounded-full"></div>
+<div class="w-2 h-10 bg-primary/40 rounded-full"></div>
+<div class="w-2 h-14 bg-primary rounded-full shadow-[0_0_20px_rgba(0,229,255,0.6)] animate-pulse"></div>
+<div class="w-2 h-12 bg-primary rounded-full shadow-[0_0_20px_rgba(0,229,255,0.4)]"></div>
+<div class="w-2 h-16 bg-primary rounded-full shadow-[0_0_25px_rgba(0,229,255,0.8)]"></div>
+<div class="w-2 h-11 bg-primary/40 rounded-full"></div>
+<div class="w-2 h-7 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+<!-- High-Gloss Background Graphic -->
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/20 transition-colors duration-700"></div>
+</section>
+</main>
+<!-- BottomNavBar: GovWatch Components_8 -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-3xl bg-[#0b0e14]/80 flex justify-around items-center px-4 pb-6 pt-3 shadow-[0_-8px_40px_rgba(0,229,255,0.12)] backdrop-blur-[24px]">
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.6)] transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Digest</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">subscriptions</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Following</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

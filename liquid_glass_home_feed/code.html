@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GovWatch - Home Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Public_Sans:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00E5FF",
+              "on-primary": "#00363d",
+              "surface": "#0b0e14",
+              "surface-container": "#11151c",
+              "outline": "#3f484a",
+              "outline-variant": "#bfc8ca",
+              "on-surface-variant": "#bfc8ca",
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Public Sans", "sans-serif"],
+              "manrope": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "1rem",
+              "2xl": "1.5rem",
+              "3xl": "2rem"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #0b0e14;
+        color: #e2e2e8;
+        background-image: radial-gradient(circle at 50% -20%, #00e5ff15 0%, transparent 50%);
+      }
+      .glass-card {
+        background: rgba(17, 21, 28, 0.4);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(0, 229, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+      .glass-card:hover {
+        border-color: rgba(0, 229, 255, 0.3);
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.05);
+      }
+      .cyan-glow {
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #0b0e14;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #3f484a;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-on-primary min-h-screen">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-cyan-950/40 flex items-center justify-between px-6 py-4 w-full shadow-[0_4px_30px_rgba(0,229,255,0.08)] backdrop-blur-2xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-400" data-icon="menu">menu</span>
+<h1 class="font-manrope font-bold tracking-tight text-2xl font-black tracking-tighter text-cyan-400">GovWatch</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:bg-white/10 p-2 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<main class="pt-28 pb-32 px-6 max-w-5xl mx-auto min-h-screen">
+<!-- Hero Section -->
+<section class="mb-14 text-center md:text-left">
+<div class="flex flex-col gap-3">
+<span class="text-primary font-bold tracking-[0.2em] text-[10px] uppercase cyan-glow">Daily Sovereign Ledger</span>
+<h2 class="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">The Pulse of <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-400">Governance</span></h2>
+<p class="text-on-surface-variant max-w-2xl mt-4 text-lg leading-relaxed font-light">
+                Unbiased, real-time insights into legislative shifts and executive actions affecting your landscape.
+            </p>
+</div>
+</section>
+<!-- News Feed -->
+<div class="space-y-8">
+<!-- Article Card 1 -->
+<article class="glass-card group relative rounded-2xl overflow-hidden transition-all duration-500">
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img alt="Author Avatar" class="w-10 h-10 rounded-full border border-primary/20 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFOGFnqAWnk-ojYhTWNmgzJi6zr0ZKucWVq9mKHFfbM4qFe7KxR61W0bqM61JVQIXZ1opln7zEXPlaQhmnMT9bsTKHY3CZ2OEql5-M91jWG4tkgXRPiBm_obFmT9Jipy_q_xLtRqZjax4YAZ6df6quTpLFI-qp_-7SR2_4MwfqQZymhXTQsoUKzoIP_YBI-FLlQF-ktN3UdhQEEBRAXWkEZprrHEoN0VmwsqiU0Hzbes2Mpr2dGYUODtO54mmAlC9XGLIzIO2_uRGN"/>
+<div class="flex flex-col">
+<span class="text-white text-sm font-bold tracking-tight">Julian Sterling</span>
+<span class="text-cyan-400/70 text-[10px] font-semibold tracking-wider uppercase">Chief Legislative Analyst</span>
+</div>
+</div>
+<span class="text-slate-500 text-[11px] font-medium">14 mins ago</span>
+</div>
+<div class="grid md:grid-cols-[1fr_200px] gap-8">
+<div>
+<div class="mb-3">
+<span class="bg-cyan-900/40 text-cyan-300 border border-cyan-400/20 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.1em]">Bills &amp; Votes</span>
+</div>
+<h3 class="font-headline text-2xl md:text-3xl font-extrabold text-white mb-4 leading-tight group-hover:text-primary transition-colors">
+                            Senate Passes 2.4T Infrastructure Revision with Key Clean Tech Provisions
+                        </h3>
+<p class="text-slate-300 text-base leading-relaxed mb-6 font-light">
+<span class="text-cyan-400 font-bold italic mr-1">GovWatch AI Brief:</span> 
+                            The late-night vote secures funding for decentralized energy grids. While bipartisan on the surface, the fine print redirects $400B from conventional highways to hydrogen transport hubs over the next decade.
+                        </p>
+<div class="flex items-center gap-4">
+<button class="bg-cyan-400 hover:bg-cyan-300 text-on-primary px-6 py-2.5 rounded-lg font-bold text-xs tracking-tight transition-all active:scale-95">
+                                Read Full Article
+                            </button>
+<button class="text-slate-400 hover:text-cyan-400 transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+</div>
+<div class="hidden md:block">
+<div class="aspect-square rounded-xl overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-700">
+<img alt="Senate Floor" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP71nj32ZH7nDPxHbm7Pby_Dc10PACMNqWiHSlMF6lpGows8mdWlx3QCV_iOkgcKwaaSYa-2o57cOaH8Us2lnEnYFASaTGhX1w2M2D6aIigyJ78N57qi0hNXFBqkgG5tUDPASsvNiRURCpJAaPC06rQ6cC5G4mbU1HU2Ohbxu9xNd6RDpBdNv2D8kYAxMg5g8gD96dZ6821Eu0kHeVwuRzBNC5TK5vkLBVHG6H_SmVCxXf-sRj_JW6RYF65raLoLyzod0PA-PnPzAe"/>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Article Card 2 -->
+<article class="glass-card group relative rounded-2xl overflow-hidden transition-all duration-500">
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img alt="Author Avatar" class="w-10 h-10 rounded-full border border-primary/20 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCogSswGH603koMce8fsFqOgslxQy7VfMqWM8AwuyPXjGJcTP3LFdRGstfDMsGOZ17y2w3liXG6sxLjzOdGuccot7dAoi6_MnO7lxFVrvdVNyVjVyyjhYihO2e0lO5UxYUX2ugGq8Z6DkC8ouvitQknZ5TY_vDgVYMLFmwsHKdFPaUIEuxQR8msQ2vx5vyO0zOgW7HOUSAnswPY-iYFTq4Bq64bGwuPak1jtaLHroCDmYdyL-XZrrVPaDztJDJof2pJWh6QK6pIDJB5"/>
+<div class="flex flex-col">
+<span class="text-white text-sm font-bold tracking-tight">Elena Vance</span>
+<span class="text-cyan-400/70 text-[10px] font-semibold tracking-wider uppercase">Policy Strategist</span>
+</div>
+</div>
+<span class="text-slate-500 text-[11px] font-medium">2 hours ago</span>
+</div>
+<div>
+<div class="mb-3">
+<span class="bg-cyan-900/40 text-cyan-300 border border-cyan-400/20 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.1em]">Executive Orders</span>
+</div>
+<h3 class="font-headline text-2xl md:text-3xl font-extrabold text-white mb-4 leading-tight group-hover:text-primary transition-colors">
+                        New Executive Directive Mandates AI Sovereignty Protocols for Federal Agencies
+                    </h3>
+<p class="text-slate-300 text-base leading-relaxed mb-8 max-w-3xl font-light">
+<span class="text-cyan-400 font-bold italic mr-1">GovWatch AI Brief:</span> 
+                        The administration has ordered a full audit of all algorithmic decision-making tools in use by the DOJ. This pivot prioritizes "human-in-the-loop" safeguards over automated efficiency, signaling a major regulatory shift.
+                    </p>
+<div class="flex items-center justify-between pt-6 border-t border-white/5">
+<div class="flex gap-6">
+<div class="flex items-center gap-2 text-cyan-400">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold uppercase tracking-widest">High Impact</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-[18px]" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-xs font-bold">128</span>
+</div>
+</div>
+<button class="border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 px-5 py-2 rounded-lg font-bold text-xs tracking-tight transition-all active:scale-95">
+                            Read Full Article
+                        </button>
+</div>
+</div>
+</div>
+</article>
+<!-- Article Card 3 (Data) -->
+<article class="glass-card group relative rounded-2xl overflow-hidden transition-all duration-500">
+<div class="p-6 md:p-8">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<img alt="Author Avatar" class="w-10 h-10 rounded-full border border-primary/20 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRbyLeupQ2yJTnZuf0LzG_HwYvKc-8RUsgzYy1h9u-rmZW59H4upGFOuICRbe9knqhH7fGUqm3W4nvjHFat7Z2oHSGOfvMROtIP-e7xJ42zlkULoLiPkzdwSRXUcbwVSWjb0z18gaCX-ryKm0BDJStBNxw3XxJh7BQDFHhZ9ih2Dj--lVGuYaOlZEiUBebulJ4T9UZpQ-iV8NThvYBF-wN7PVBtmew3mJPvXpMulz7sFAVbOb33HcCfmdqmw2QUHKC19fP-vqd-C14"/>
+<div class="flex flex-col">
+<span class="text-white text-sm font-bold tracking-tight">Marcus Thorne</span>
+<span class="text-cyan-400/70 text-[10px] font-semibold tracking-wider uppercase">Fiscal Data Specialist</span>
+</div>
+</div>
+<span class="text-slate-500 text-[11px] font-medium">5 hours ago</span>
+</div>
+<div class="grid lg:grid-cols-[1fr_300px] gap-10 items-start">
+<div>
+<div class="mb-3">
+<span class="bg-cyan-900/40 text-cyan-300 border border-cyan-400/20 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.1em]">Government Spending</span>
+</div>
+<h3 class="font-headline text-2xl font-extrabold text-white mb-4 leading-tight group-hover:text-primary transition-colors">
+                            Unallocated Defense Surplus Repurposed for Cyber-Shield Initiative
+                        </h3>
+<p class="text-slate-300 text-base leading-relaxed mb-6 font-light">
+<span class="text-cyan-400 font-bold italic mr-1">GovWatch AI Brief:</span> 
+                            An unexpected $12B surplus from the naval hardware procurement cycle has been redirected. The funds will bolster municipal ransomware defenses following last month's multi-state breach.
+                        </p>
+<button class="bg-cyan-400 hover:bg-cyan-300 text-on-primary px-6 py-3 rounded-lg font-bold text-xs tracking-tight transition-all active:scale-95 shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                            Read Full Article
+                        </button>
+</div>
+<div class="bg-black/40 p-6 rounded-2xl border border-white/5 backdrop-blur-2xl">
+<div class="flex justify-between items-center mb-6">
+<span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Funding Flux (Monthly)</span>
+<span class="text-cyan-400 text-xs font-black">+12.4%</span>
+</div>
+<div class="h-24 w-full flex items-end gap-1.5 px-1">
+<div class="w-full bg-cyan-400/10 h-1/2 rounded-t-sm"></div>
+<div class="w-full bg-cyan-400/10 h-2/3 rounded-t-sm"></div>
+<div class="w-full bg-cyan-400/10 h-1/3 rounded-t-sm"></div>
+<div class="w-full bg-cyan-400/20 h-3/4 rounded-t-sm"></div>
+<div class="w-full bg-cyan-400/30 h-1/2 rounded-t-sm"></div>
+<div class="w-full bg-cyan-400 h-full rounded-t-sm shadow-[0_0_15px_rgba(0,229,255,0.4)]"></div>
+</div>
+<div class="mt-6 grid grid-cols-2 gap-4 text-center border-t border-white/5 pt-5">
+<div>
+<div class="text-[9px] text-slate-500 uppercase font-black tracking-widest">Allocated</div>
+<div class="text-white font-headline font-extrabold text-lg">$12.4B</div>
+</div>
+<div>
+<div class="text-[9px] text-slate-500 uppercase font-black tracking-widest">Duration</div>
+<div class="text-white font-headline font-extrabold text-lg">18 Mo</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Article Card 4 -->
+<article class="glass-card group relative rounded-2xl overflow-hidden transition-all duration-500">
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img alt="Author Avatar" class="w-10 h-10 rounded-full border border-primary/20 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqWsN6Sdb3bFx86sgM1zuk8tqoCgFODjgaMQkFRnbUrTKC2GhlDWRvwxf3bSCLTU1SeGgdmnyw-GalbS3kemWlHtoCPIWNNJDDE01frDHrj2eW4l5t4vgPZwhTkpZEvQjIR19SsuRSGJQ6N46ONHiw-95ata-KBmqPH2A6GunjFPqpH_iLCfG4P5doE0a7LLiqHRpwoQnW4YI6Me8Hw4_-4_yf03d0ITtMPr3T0Kfzv7FvbmFQ6boa6EHoqxHIfBcfjfKRsbM-LNa3"/>
+<div class="flex flex-col">
+<span class="text-white text-sm font-bold tracking-tight">Sarah Jenkins</span>
+<span class="text-cyan-400/70 text-[10px] font-semibold tracking-wider uppercase">Constitutional Expert</span>
+</div>
+</div>
+<span class="text-slate-500 text-[11px] font-medium">Yesterday</span>
+</div>
+<div>
+<div class="mb-3">
+<span class="bg-cyan-900/40 text-cyan-300 border border-cyan-400/20 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.1em]">Court Rulings</span>
+</div>
+<h3 class="font-headline text-2xl md:text-3xl font-extrabold text-white mb-4 leading-tight group-hover:text-primary transition-colors">
+                        Appellate Court Reinstates Corporate Transparency Act Requirements
+                    </h3>
+<p class="text-slate-300 text-base leading-relaxed mb-8 max-w-3xl font-light">
+<span class="text-cyan-400 font-bold italic mr-1">GovWatch AI Brief:</span> 
+                        The 11th Circuit has stayed a lower court injunction, meaning small business reporting requirements are back in effect. Filing deadlines remain March 31st for existing entities to avoid penalties.
+                    </p>
+<div class="flex items-center gap-6">
+<button class="bg-cyan-400 hover:bg-cyan-300 text-on-primary px-6 py-2.5 rounded-lg font-bold text-xs tracking-tight transition-all active:scale-95">
+                            Read Full Article
+                        </button>
+<button class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="share">share</span>
+<span class="text-[10px] font-black uppercase tracking-[0.15em]">Circulate</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#0b0e14]/80 z-50 rounded-t-3xl shadow-[0_-8px_40px_rgba(0,229,255,0.12)] backdrop-blur-[40px]">
+<a class="flex flex-col items-center justify-center text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.6)] active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Digest</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="subscriptions">subscriptions</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Following</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-cyan-300 transition-all active:scale-90 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Settings</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<div class="fixed right-6 bottom-28 z-40">
+<button class="w-14 h-14 bg-cyan-400 text-on-primary rounded-full shadow-[0_0_30px_rgba(0,229,255,0.5)] flex items-center justify-center active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</div>
+</body></html>

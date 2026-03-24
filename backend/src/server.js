@@ -1,5 +1,10 @@
 require('dotenv').config();
 
+// Startup diagnostics
+console.log('[Boot] DATABASE_URL set:', !!process.env.DATABASE_URL);
+console.log('[Boot] NODE_ENV:', process.env.NODE_ENV || 'not set');
+console.log('[Boot] PORT:', process.env.PORT || '3000 (default)');
+
 const express = require('express');
 const cors = require('cors');
 const { startScheduler } = require('./scheduler');

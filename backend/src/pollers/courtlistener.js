@@ -11,7 +11,7 @@ async function pollCourtListener() {
     const { data } = await axios.get(`${BASE_URL}/clusters/`, {
       params: {
         order_by: '-date_filed',
-        page_size: 20,
+        page_size: 5,
       },
       headers: {
         'User-Agent': 'GovWatch/1.0 (news aggregator)',
@@ -22,7 +22,13 @@ async function pollCourtListener() {
       timeout: 10000,
     });
 
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7);
+
     for (const cluster of data.results || []) {
+      const publishedAt = cluster.date_filed ? new Date(cluster.date_filed) : new Date();
+      if (publishedAt < cutoff) continue;
+
       const externalId = `courtlistener-${cluster.id}`;
 
       const { rows } = await pool.query(
@@ -38,10 +44,6 @@ async function pollCourtListener() {
         : null;
 
       const { brief } = await generateBriefAndCategory(title, content);
-
-      const publishedAt = cluster.date_filed
-        ? new Date(cluster.date_filed)
-        : new Date();
 
       await pool.query(
         `INSERT INTO articles

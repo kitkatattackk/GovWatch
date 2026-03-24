@@ -24,8 +24,12 @@ async function pollSubstack() {
 
     try {
       const feed = await parser.parseURL(feedUrl);
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 7);
 
-      for (const item of feed.items) {
+      for (const item of feed.items.slice(0, 5)) {
+        const publishedAt = item.pubDate ? new Date(item.pubDate) : new Date();
+        if (publishedAt < cutoff) continue;
         const url = item.link;
         if (!url) continue;
 
@@ -37,7 +41,6 @@ async function pollSubstack() {
         if (rows.length > 0) continue;
 
         const rawContent = item.contentEncoded || item.content || item.summary || '';
-        const publishedAt = item.pubDate ? new Date(item.pubDate) : new Date();
 
         // Generate brief + auto-classify category
         const { brief, category } = await generateBriefAndCategory(item.title, rawContent);

@@ -17,13 +17,19 @@ async function pollCongress() {
     const { data } = await axios.get(`${BASE_URL}/bill`, {
       params: {
         sort: 'updateDate+desc',
-        limit: 20,
+        limit: 5,
         api_key: apiKey,
       },
       timeout: 10000,
     });
 
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7);
+
     for (const bill of data.bills || []) {
+      const publishedAt = bill.updateDate ? new Date(bill.updateDate) : new Date();
+      if (publishedAt < cutoff) continue;
+
       const externalId =
         bill.url || `congress-${bill.congress}-${bill.type}-${bill.number}`;
 
@@ -43,8 +49,6 @@ async function pollCongress() {
 
       // Bills are always bills_votes — skip category auto-detection
       const { brief } = await generateBriefAndCategory(title, content);
-
-      const publishedAt = bill.updateDate ? new Date(bill.updateDate) : new Date();
 
       await pool.query(
         `INSERT INTO articles

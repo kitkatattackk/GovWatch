@@ -13,7 +13,7 @@ async function pollFederalRegister() {
         'conditions[type][]': 'PRESDOCU',
         'conditions[presidential_document_type][]': 'executive_order',
         'order': 'newest',
-        'per_page': 20,
+        'per_page': 5,
         'fields[]': [
           'document_number',
           'title',
@@ -27,7 +27,15 @@ async function pollFederalRegister() {
       timeout: 10000,
     });
 
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7);
+
     for (const doc of data.results || []) {
+      const publishedAt = doc.signing_date
+        ? new Date(doc.signing_date)
+        : new Date(doc.publication_date);
+      if (publishedAt < cutoff) continue;
+
       const externalId = `federal-register-${doc.document_number}`;
 
       const { rows } = await pool.query(
@@ -46,7 +54,6 @@ async function pollFederalRegister() {
       const publishedAt = doc.signing_date
         ? new Date(doc.signing_date)
         : new Date(doc.publication_date);
-
       await pool.query(
         `INSERT INTO articles
            (external_id, title, content, ai_brief, category, source, source_url, published_at)

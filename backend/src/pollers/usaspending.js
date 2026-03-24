@@ -35,7 +35,7 @@ async function pollUSASpending() {
         ],
         sort: 'Award Amount',
         order: 'desc',
-        limit: 15,
+        limit: 5,
         page: 1,
       },
       { timeout: 15000 }

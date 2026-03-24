@@ -7,16 +7,21 @@ const router = express.Router();
 // Query params: ?category=bills_votes&limit=20&offset=0
 router.get('/', async (req, res) => {
   try {
-    const { category, limit = 20, offset = 0 } = req.query;
+    const { category, limit = 10, offset = 0, days = 2 } = req.query;
 
     const params = [];
-    let where = '';
+    const conditions = [];
+
+    // Default: last N days only
+    params.push(parseInt(days, 10));
+    conditions.push(`a.published_at >= NOW() - INTERVAL '1 day' * $${params.length}`);
 
     if (category) {
       params.push(category);
-      where = `WHERE a.category = $${params.length}`;
+      conditions.push(`a.category = $${params.length}`);
     }
 
+    const where = `WHERE ${conditions.join(' AND ')}`;
     params.push(parseInt(limit, 10), parseInt(offset, 10));
 
     const { rows } = await pool.query(

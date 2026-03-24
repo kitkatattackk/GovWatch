@@ -7,15 +7,15 @@ const { pollUSASpending }      = require('./pollers/usaspending');
 const { generateDailyDigest }  = require('./services/digest_generator');
 
 function startScheduler() {
-  // Substack: every 15 minutes
-  cron.schedule('*/15 * * * *', async () => {
+  // Substack: every 4 hours
+  cron.schedule('0 */4 * * *', async () => {
     console.log('[Scheduler] → Substack poll starting...');
     await pollSubstack();
     console.log('[Scheduler] ✓ Substack poll done.');
   });
 
-  // Government APIs: every 30 minutes
-  cron.schedule('*/30 * * * *', async () => {
+  // Government APIs: every 6 hours
+  cron.schedule('0 */6 * * *', async () => {
     console.log('[Scheduler] → Government APIs poll starting...');
     await pollCongress();
     await pollFederalRegister();
@@ -31,7 +31,7 @@ function startScheduler() {
     console.log('[Scheduler] ✓ Daily digest done.');
   });
 
-  console.log('[Scheduler] Started — Substack: 15min | Gov APIs: 30min | Digest: 6AM daily');
+  console.log('[Scheduler] Started — Substack: 4hr | Gov APIs: 6hr | Digest: 6AM daily');
 }
 
 module.exports = { startScheduler };

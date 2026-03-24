@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     res.json({ authors: rows });
   } catch (err) {
     console.error('[GET /api/authors]', err.message);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', detail: err.message });
   }
 });
 

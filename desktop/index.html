@@ -544,6 +544,19 @@ async function loadFeed() {
     const res  = await fetch(`${API}/api/feed?${params}`);
     const data = await res.json();
     allArticles = data.articles || [];
+
+    if (allArticles.length === 0) {
+      document.getElementById('feed-list').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;gap:10px;color:#94A3B8;font-size:12px;text-align:center;padding:0 20px">
+          <span class="msym" style="font-size:28px;animation:spin 1.2s linear infinite;color:#BFDBFE">sync</span>
+          <span style="font-weight:600;color:#64748B">Fetching latest articles…</span>
+          <span>Polling sources for the first time</span>
+        </div>`;
+      await fetch(`${API}/api/poll`, { method: 'POST' });
+      setTimeout(loadFeed, 8000);
+      return;
+    }
+
     renderFeed(allArticles);
   } catch(e) {
     console.error('Feed fetch failed:', e);

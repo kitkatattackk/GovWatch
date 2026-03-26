@@ -1,0 +1,39 @@
+{
+  "name": "govwatch-desktop",
+  "version": "1.0.0",
+  "description": "GovWatch Desktop — follow government actions and political writers in one place",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "com.govwatch.desktop",
+    "productName": "GovWatch",
+    "mac": {
+      "category": "public.app-category.news",
+      "icon": "icon.icns",
+      "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }]
+    },
+    "dmg": {
+      "title": "GovWatch ${version}",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ],
+      "window": { "width": 540, "height": 380 }
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html"
+    ],
+    "extraResources": [
+      { "from": "../backend", "to": "backend", "filter": ["**/*", "!node_modules"] }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

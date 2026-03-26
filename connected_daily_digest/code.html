@@ -43,18 +43,35 @@
 
   <!-- Top App Bar -->
   <header class="shrink-0 px-4 pt-3 pb-4 border-b" style="background:rgba(11,15,26,0.97);border-color:#1A2235">
-    <div class="flex items-center justify-between mb-0.5">
+    <!-- Default header row -->
+    <div id="header-default" class="flex items-center justify-between mb-0.5">
       <div class="flex items-center gap-2.5">
-        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
-          <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
-        </div>
+        <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        </svg>
         <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
       </div>
-      <button class="p-2 rounded-full text-slate-400">
+      <button onclick="openSearch()" class="p-2 rounded-full text-slate-400 hover:bg-white/5 transition-colors">
         <span class="msym">search</span>
       </button>
     </div>
-    <div class="mt-3">
+    <!-- Search row (hidden by default) -->
+    <div id="header-search" class="hidden flex items-center gap-2 mb-0.5">
+      <button onclick="closeSearch()" class="p-2 rounded-full text-slate-400 hover:bg-white/5 transition-colors flex-shrink-0">
+        <span class="msym">arrow_back</span>
+      </button>
+      <div class="flex-1 flex items-center gap-2 rounded-xl px-3 py-2 border" style="background:#111827;border-color:#1E2A3B">
+        <span class="msym" style="font-size:18px;color:#4B5568">search</span>
+        <input id="search-input" type="text" placeholder="Search articles..."
+          class="flex-1 bg-transparent text-[13px] text-white" style="border:none;outline:none"
+          oninput="filterDigest(this.value)"/>
+      </div>
+    </div>
+    <div class="mt-3" id="header-title">
       <p class="text-[11px] font-semibold uppercase tracking-widest mb-0.5" style="color:#3B82F6" id="date-label">—</p>
       <h1 class="text-2xl font-extrabold text-white tracking-tight">Daily Digest</h1>
       <p class="text-[12px] mt-0.5" style="color:#64748B" id="total-label">Loading...</p>
@@ -87,7 +104,7 @@
         <span class="msym">group</span>
         <span class="text-[10px] font-medium">Authors</span>
       </a>
-      <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+      <a href="../connected_notifications/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
         <span class="msym">notifications</span>
         <span class="text-[10px] font-medium">Alerts</span>
       </a>
@@ -99,6 +116,47 @@
 
 <script>
 const API = 'http://localhost:3000';
+let allGroups = [];
+
+function openSearch() {
+  document.getElementById('header-default').classList.add('hidden');
+  document.getElementById('header-search').classList.remove('hidden');
+  document.getElementById('header-title').classList.add('hidden');
+  document.getElementById('search-input').focus();
+}
+
+function closeSearch() {
+  document.getElementById('header-search').classList.add('hidden');
+  document.getElementById('header-default').classList.remove('hidden');
+  document.getElementById('header-title').classList.remove('hidden');
+  document.getElementById('search-input').value = '';
+  renderDigest(allGroups);
+}
+
+function filterDigest(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) { renderDigest(allGroups); return; }
+
+  const filtered = allGroups.map(group => ({
+    ...group,
+    articles: group.articles.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      (a.author_name || '').toLowerCase().includes(q) ||
+      (a.source || '').toLowerCase().includes(q)
+    ),
+  })).filter(g => g.articles.length > 0);
+
+  const content = document.getElementById('digest-content');
+  if (filtered.length === 0) {
+    content.innerHTML = `
+      <div class="text-center py-20 text-slate-500">
+        <span class="msym block mx-auto mb-2" style="font-size:36px">search_off</span>
+        <p class="text-sm">No results for "${esc(query)}"</p>
+      </div>`;
+  } else {
+    content.innerHTML = filtered.map(renderSection).join('');
+  }
+}
 
 function updateClock() {
   const now = new Date();
@@ -174,6 +232,10 @@ function renderSection(group) {
   </section>`;
 }
 
+function renderDigest(groups) {
+  document.getElementById('digest-content').innerHTML = groups.map(renderSection).join('');
+}
+
 function openArticle(id) {
   window.location.href = `../connected_article_detail/code.html?id=${id}`;
 }
@@ -208,7 +270,8 @@ async function loadDigest() {
       return;
     }
 
-    content.innerHTML = groups.map(renderSection).join('');
+    allGroups = groups;
+    renderDigest(groups);
   } catch (err) {
     console.error(err);
     content.innerHTML = `

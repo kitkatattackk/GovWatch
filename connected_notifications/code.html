@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GovWatch - Notifications</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: #1e1e1e; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; }
+  .device { position: relative; width: 393px; height: 852px; background: #1C1C1E; border-radius: 50px; border: 1.5px solid #3D3D3D; box-shadow: 0 0 0 1px #000, 0 40px 120px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0; }
+  .btn-vol-up, .btn-vol-dn { position: absolute; left: -3px; width: 3px; background: #2C2C2E; border-radius: 2px 0 0 2px; }
+  .btn-vol-up { top: 120px; height: 36px; }
+  .btn-vol-dn { top: 172px; height: 36px; }
+  .btn-power { position: absolute; right: -3px; top: 140px; width: 3px; height: 60px; background: #2C2C2E; border-radius: 0 2px 2px 0; }
+  .dynamic-island { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 200; }
+  .phone { width: 100%; height: 100%; background: #0B0F1A; color: #F1F5F9; display: flex; flex-direction: column; overflow: hidden; }
+  .phone-scroll { flex: 1; overflow-y: auto; }
+  .phone-scroll::-webkit-scrollbar { display: none; }
+  .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-size: 22px; }
+  .toggle { position: relative; width: 46px; height: 26px; border-radius: 13px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; background: #1E2A3B; }
+  .toggle.on { background: #2563EB; }
+  .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #F1F5F9; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .toggle.on::after { transform: translateX(20px); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .skeleton { background: #1A2235; border-radius: 8px; animation: pulse 1.5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="dynamic-island"></div>
+  <div class="btn-vol-up"></div>
+  <div class="btn-vol-dn"></div>
+  <div class="btn-power"></div>
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="shrink-0 flex items-center justify-between px-5 py-2 text-[11px] font-medium" style="background:#0B0F1A;color:#64748B">
+    <span class="font-semibold" style="color:#CBD5E1" id="clock">9:41</span>
+    <div class="flex items-center gap-2">
+      <span class="msym" style="font-size:13px">signal_cellular_alt</span>
+      <span class="msym" style="font-size:13px">wifi</span>
+      <span class="msym" style="font-size:13px">battery_5_bar</span>
+    </div>
+  </div>
+
+  <!-- Top App Bar -->
+  <header class="shrink-0 px-4 pt-3 pb-4 border-b" style="background:rgba(11,15,26,0.97);border-color:#1A2235">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        </svg>
+        <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+      </div>
+    </div>
+    <div class="mt-3">
+      <h1 class="text-2xl font-extrabold text-white tracking-tight">Notifications</h1>
+      <p class="text-[12px] mt-0.5" style="color:#64748B">Choose what you want to be alerted about.</p>
+    </div>
+  </header>
+
+  <!-- Scrollable Content -->
+  <div class="phone-scroll">
+    <main class="pb-6 px-4 space-y-5 pt-5">
+
+      <!-- Authors Section -->
+      <section>
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-[11px] font-bold uppercase tracking-widest" style="color:#3B82F6">Authors</span>
+          <span class="text-[11px]" style="color:#64748B">New posts</span>
+        </div>
+        <div class="rounded-2xl border overflow-hidden" id="authors-list" style="background:#111827;border-color:#1E2A3B">
+          <div class="skeleton h-14 m-3" style="width:calc(100% - 1.5rem)"></div>
+          <div class="skeleton h-14 m-3" style="width:calc(100% - 1.5rem)"></div>
+        </div>
+      </section>
+
+      <!-- Categories Section -->
+      <section>
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-[11px] font-bold uppercase tracking-widest" style="color:#3B82F6">Topics</span>
+          <span class="text-[11px]" style="color:#64748B">Breaking alerts</span>
+        </div>
+        <div class="rounded-2xl border overflow-hidden" style="background:#111827;border-color:#1E2A3B">
+          <div class="flex items-center gap-3.5 px-4 py-3.5 border-b" style="border-color:#1A2235">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(59,130,246,0.15)">
+              <span class="msym" style="font-size:17px;color:#60A5FA">how_to_vote</span>
+            </div>
+            <span class="text-[14px] font-medium text-white flex-1">Bills &amp; Votes</span>
+            <div class="toggle on" onclick="toggleThis(this,'cat_bills_votes')"></div>
+          </div>
+          <div class="flex items-center gap-3.5 px-4 py-3.5 border-b" style="border-color:#1A2235">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(245,158,11,0.15)">
+              <span class="msym" style="font-size:17px;color:#FCD34D">edit_document</span>
+            </div>
+            <span class="text-[14px] font-medium text-white flex-1">Executive Orders</span>
+            <div class="toggle on" onclick="toggleThis(this,'cat_executive_orders')"></div>
+          </div>
+          <div class="flex items-center gap-3.5 px-4 py-3.5 border-b" style="border-color:#1A2235">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(167,139,250,0.15)">
+              <span class="msym" style="font-size:17px;color:#C4B5FD">gavel</span>
+            </div>
+            <span class="text-[14px] font-medium text-white flex-1">Court Rulings</span>
+            <div class="toggle" onclick="toggleThis(this,'cat_court_rulings')"></div>
+          </div>
+          <div class="flex items-center gap-3.5 px-4 py-3.5 border-b" style="border-color:#1A2235">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(52,211,153,0.15)">
+              <span class="msym" style="font-size:17px;color:#6EE7B7">account_balance</span>
+            </div>
+            <span class="text-[14px] font-medium text-white flex-1">Government Spending</span>
+            <div class="toggle" onclick="toggleThis(this,'cat_government_spending')"></div>
+          </div>
+          <div class="flex items-center gap-3.5 px-4 py-3.5" style="border-color:#1A2235">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(244,114,182,0.15)">
+              <span class="msym" style="font-size:17px;color:#FDA4AF">rate_review</span>
+            </div>
+            <span class="text-[14px] font-medium text-white flex-1">Opinion</span>
+            <div class="toggle on" onclick="toggleThis(this,'cat_opinion')"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Daily Digest Section -->
+      <section>
+        <div class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="msym" style="font-size:17px;color:#F59E0B">auto_stories</span>
+                <p class="text-[14px] font-bold text-white">Daily Digest</p>
+              </div>
+              <p class="text-[12px] leading-relaxed" style="color:#64748B">Get a morning summary of the day's most important government actions, delivered at 6 AM.</p>
+            </div>
+            <div class="toggle on mt-0.5" onclick="toggleThis(this,'pref_daily_digest')"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Breaking News Section -->
+      <section>
+        <div class="rounded-2xl border p-4" style="background:#111827;border-color:#1E2A3B">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="msym" style="font-size:17px;color:#EF4444">bolt</span>
+                <p class="text-[14px] font-bold text-white">Breaking Alerts</p>
+              </div>
+              <p class="text-[12px] leading-relaxed" style="color:#64748B">Instant push notification for major breaking government news, regardless of your topic filters.</p>
+            </div>
+            <div class="toggle on mt-0.5" onclick="toggleThis(this,'pref_breaking')"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="shrink-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235">
+    <div class="flex justify-around items-center">
+      <a href="../connected_home_feed/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">home</span>
+        <span class="text-[10px] font-medium">Home</span>
+      </a>
+      <a href="../connected_daily_digest/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">auto_stories</span>
+        <span class="text-[10px] font-medium">Digest</span>
+      </a>
+      <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">group</span>
+        <span class="text-[10px] font-medium">Authors</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
+        <span class="msym" style="font-variation-settings:'FILL' 1">notifications</span>
+        <span class="text-[10px] font-semibold">Alerts</span>
+      </a>
+    </div>
+  </nav>
+
+</div><!-- /phone -->
+</div><!-- /device -->
+
+<script>
+const API = 'http://localhost:3000';
+const PREFS_KEY = 'govwatch_notif_prefs';
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch { return {}; }
+}
+
+function savePrefs(prefs) {
+  localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+}
+
+function toggleThis(el, key) {
+  el.classList.toggle('on');
+  const prefs = loadPrefs();
+  prefs[key] = el.classList.contains('on');
+  savePrefs(prefs);
+}
+
+function applyPrefs(prefs) {
+  document.querySelectorAll('[data-pref-key]').forEach(el => {
+    const key = el.dataset.prefKey;
+    if (key in prefs) {
+      el.classList.toggle('on', prefs[key]);
+    }
+  });
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function avatarUrl(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=162850&color=93c5fd&size=64&bold=true`;
+}
+
+async function loadAuthors() {
+  try {
+    const res = await fetch(`${API}/api/authors`);
+    const data = await res.json();
+    const authors = data.authors || [];
+    const prefs = loadPrefs();
+    const list = document.getElementById('authors-list');
+
+    if (authors.length === 0) {
+      list.innerHTML = `<div class="p-4 text-sm text-center" style="color:#64748B">No authors followed yet.</div>`;
+      return;
+    }
+
+    list.innerHTML = authors.map((a, i) => {
+      const isLast = i === authors.length - 1;
+      const key = `author_${a.id}`;
+      const isOn = key in prefs ? prefs[key] : true;
+      return `
+      <div class="flex items-center gap-3 px-4 py-3 ${isLast ? '' : 'border-b'}" style="border-color:#1A2235">
+        <img src="${avatarUrl(a.name)}" class="w-9 h-9 rounded-full object-cover flex-shrink-0"/>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] font-semibold text-white leading-none mb-0.5">${esc(a.name)}</p>
+          <p class="text-[11px] truncate" style="color:#64748B">${esc(a.substack_slug)}.substack.com</p>
+        </div>
+        <div class="toggle ${isOn ? 'on' : ''}" onclick="toggleThis(this,'${key}')"></div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    document.getElementById('authors-list').innerHTML =
+      `<div class="p-4 text-sm" style="color:#64748B">Couldn't load authors.</div>`;
+  }
+}
+
+// Apply saved prefs to static toggles on load
+document.querySelectorAll('.toggle[onclick]').forEach(el => {
+  const match = el.getAttribute('onclick').match(/'([^']+)'\)/);
+  if (!match) return;
+  const key = match[1];
+  const prefs = loadPrefs();
+  if (key in prefs) el.classList.toggle('on', prefs[key]);
+});
+
+loadAuthors();
+</script>
+
+</body>
+</html>

@@ -8,29 +8,36 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
   html, body { height: 100%; background: #080B13; color: #F1F5F9; font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
 
-  .app { display: flex; height: 100vh; }
+  .app { display: flex; flex-direction: column; height: 100vh; }
 
-  /* ── Sidebar ── */
-  .sidebar { width: 220px; flex-shrink: 0; background: #060810; border-right: 1px solid #111827; display: flex; flex-direction: column; -webkit-app-region: drag; }
-  .sidebar-logo { display: flex; align-items: center; gap: 9px; padding: 0 16px 0 80px; height: 52px; padding-top: 8px; }
-  .sidebar-logo span { font-size: 15px; font-weight: 700; color: #F1F5F9; letter-spacing: -0.3px; -webkit-app-region: no-drag; }
-  .sidebar-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; padding: 16px 16px 6px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin: 1px 8px; border-radius: 7px; cursor: pointer; color: #8899AA; font-size: 13px; font-weight: 500; transition: all 0.12s; -webkit-app-region: no-drag; }
-  .nav-item:hover { background: rgba(255,255,255,0.06); color: #CBD5E1; }
-  .nav-item.active { background: rgba(37,99,235,0.18); color: #93C5FD; }
-  .nav-item .msym { font-size: 18px; }
-  .filter-item { display: flex; align-items: center; gap: 9px; padding: 6px 12px; margin: 1px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: #64748B; transition: all 0.12s; -webkit-app-region: no-drag; }
-  .filter-item:hover { color: #94A3B8; }
-  .filter-item.active { color: #F1F5F9; font-weight: 600; }
-  .filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .sidebar-spacer { flex: 1; }
-  .sidebar-footer { padding: 12px 16px; font-size: 11px; color: #1E2A3B; border-top: 1px solid #0D1117; -webkit-app-region: no-drag; }
+  /* ── Top Bar (draggable chrome) ── */
+  .topbar { height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 20px; -webkit-app-region: drag; background: #080B13; }
+
+  /* ── Pill Nav ── */
+  .pill-nav { display: flex; align-items: center; gap: 2px; background: #0F1521; border: 1px solid #1A2235; border-radius: 100px; padding: 4px 5px; -webkit-app-region: no-drag; box-shadow: 0 2px 16px rgba(0,0,0,0.5); }
+  .pill-logo { display: flex; align-items: center; gap: 7px; padding: 5px 14px 5px 10px; cursor: default; }
+  .pill-logo span { font-size: 14px; font-weight: 700; color: #E2E8F0; letter-spacing: -0.3px; }
+  .pill-sep { width: 1px; height: 18px; background: #1E2A3B; margin: 0 3px; flex-shrink: 0; }
+  .pill-link { padding: 6px 15px; border-radius: 100px; font-size: 13px; font-weight: 500; color: #4B5A6E; cursor: pointer; transition: all 0.12s; white-space: nowrap; -webkit-app-region: no-drag; }
+  .pill-link:hover { color: #94A3B8; background: rgba(255,255,255,0.04); }
+  .pill-link.active { color: #E2E8F0; background: #1A2640; font-weight: 600; }
+
+  /* ── Content area ── */
+  .content { display: flex; flex: 1; overflow: hidden; border-top: 1px solid #0D1117; }
 
   /* ── Feed Panel ── */
-  .feed-panel { width: 400px; flex-shrink: 0; border-right: 1px solid #111827; display: flex; flex-direction: column; background: #0B0F1A; }
-  .feed-header { padding: 0 12px; height: 52px; display: flex; align-items: center; border-bottom: 1px solid #111827; background: #080B13; flex-shrink: 0; -webkit-app-region: drag; }
-  .feed-search { display: flex; align-items: center; gap: 8px; flex: 1; background: #111827; border: 1px solid #1A2235; border-radius: 8px; padding: 6px 10px; -webkit-app-region: no-drag; }
-  .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #F1F5F9; font-family: 'Inter', sans-serif; }
+  .feed-panel { width: 380px; flex-shrink: 0; border-right: 1px solid #111827; display: flex; flex-direction: column; background: #0B0F1A; }
+  .feed-header { padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; border-bottom: 1px solid #0D1117; background: #0B0F1A; flex-shrink: 0; }
+  .feed-search { display: flex; align-items: center; gap: 8px; background: #111827; border: 1px solid #1A2235; border-radius: 8px; padding: 6px 10px; }
+
+  /* ── Filter chips ── */
+  .feed-filters { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 2px; padding-right: 8px; }
+  .feed-filters::-webkit-scrollbar { display: none; }
+  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #4B5568; border: 1px solid #1A2235; white-space: nowrap; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
+  .filter-chip:hover { color: #94A3B8; border-color: #2D3F55; }
+  .filter-chip.active { color: #E2E8F0; border-color: #2D3F55; background: #141E30; font-weight: 600; }
+  .filter-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #F1F5F9; font-family: 'Inter', sans-serif; -webkit-app-region: no-drag; }
   .feed-list { flex: 1; overflow-y: auto; }
   .feed-list::-webkit-scrollbar { display: none; }
 
@@ -41,11 +48,11 @@
   .digest-section-header { padding: 8px 14px 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: #0B0F1A; z-index: 1; border-bottom: 1px solid #0D1117; }
 
   /* ── Detail Panel ── */
-  .detail-panel { flex: 1; overflow-y: auto; background: #0B0F1A; }
+  .detail-panel { flex: 1; overflow-y: auto; background: #080B13; }
   .detail-panel::-webkit-scrollbar { width: 6px; }
   .detail-panel::-webkit-scrollbar-track { background: transparent; }
   .detail-panel::-webkit-scrollbar-thumb { background: #1A2235; border-radius: 3px; }
-  .detail-content { max-width: 680px; padding: 40px 52px; }
+  .detail-content { max-width: 740px; margin: 0 auto; padding: 40px 52px; }
 
   /* ── Tags ── */
   .cat-tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -70,84 +77,76 @@
 <body>
 <div class="app">
 
-  <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-        <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-        <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-        <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-        <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-        <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
-      </svg>
-      <span>GovWatch</span>
-    </div>
-
-    <nav style="margin-top:4px">
-      <div class="nav-item active" id="nav-home" onclick="navigate('home')">
-        <span class="msym">home</span> Home
+  <!-- ══ PILL NAV ══ -->
+  <div class="topbar">
+    <nav class="pill-nav">
+      <div class="pill-logo">
+        <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        </svg>
+        <span>GovWatch</span>
       </div>
-      <div class="nav-item" id="nav-digest" onclick="navigate('digest')">
-        <span class="msym">auto_stories</span> Daily Digest
-      </div>
-      <div class="nav-item" id="nav-authors" onclick="navigate('authors')">
-        <span class="msym">group</span> Authors
-      </div>
-      <div class="nav-item" id="nav-alerts" onclick="navigate('alerts')">
-        <span class="msym">notifications</span> Alerts
-      </div>
+      <div class="pill-sep"></div>
+      <div class="pill-link active" id="nav-home" onclick="navigate('home')">Home</div>
+      <div class="pill-link" id="nav-digest" onclick="navigate('digest')">Daily Digest</div>
+      <div class="pill-link" id="nav-authors" onclick="navigate('authors')">Authors</div>
+      <div class="pill-link" id="nav-alerts" onclick="navigate('alerts')">Alerts</div>
     </nav>
-
-    <div id="sidebar-filters">
-      <div class="sidebar-section-label">Filters</div>
-      <div class="filter-item active" onclick="setFilter(this,'','')">
-        <div class="filter-dot" style="background:#334155"></div> All
-      </div>
-      <div class="filter-item" onclick="setFilter(this,'','substack')">
-        <div class="filter-dot" style="background:#FDA4AF"></div> Substackers
-      </div>
-      <div class="filter-item" onclick="setFilter(this,'bills_votes','')">
-        <div class="filter-dot" style="background:#60A5FA"></div> Bills &amp; Votes
-      </div>
-      <div class="filter-item" onclick="setFilter(this,'executive_orders','')">
-        <div class="filter-dot" style="background:#FCD34D"></div> Exec Orders
-      </div>
-      <div class="filter-item" onclick="setFilter(this,'court_rulings','')">
-        <div class="filter-dot" style="background:#C4B5FD"></div> Court Rulings
-      </div>
-      <div class="filter-item" onclick="setFilter(this,'government_spending','')">
-        <div class="filter-dot" style="background:#6EE7B7"></div> Spending
-      </div>
-    </div>
-
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-footer" id="feed-count"></div>
-  </aside>
-
-  <!-- ══ FEED PANEL ══ -->
-  <div class="feed-panel">
-    <div class="feed-header">
-      <div class="feed-search">
-        <span class="msym" style="font-size:15px;color:#334155">search</span>
-        <input id="search-input" type="text" placeholder="Search..." oninput="onSearch(this.value)"/>
-      </div>
-    </div>
-    <div class="feed-list" id="feed-list"></div>
   </div>
 
-  <!-- ══ DETAIL PANEL ══ -->
-  <div class="detail-panel" id="detail-panel">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
-      <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.15">
-        <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-        <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-        <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-        <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-        <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
-      </svg>
-      <p style="font-size:13px;color:#1E2A3B;font-weight:500">Select an article to read</p>
+  <!-- ══ CONTENT ══ -->
+  <div class="content">
+
+    <!-- FEED PANEL -->
+    <div class="feed-panel">
+      <div class="feed-header">
+        <div class="feed-search">
+          <span class="msym" style="font-size:15px;color:#334155">search</span>
+          <input id="search-input" type="text" placeholder="Search..." oninput="onSearch(this.value)"/>
+        </div>
+        <div class="feed-filters" id="feed-filters">
+          <div class="filter-chip active" onclick="setFilter(this,'','')">
+            <div class="filter-dot" style="background:#334155"></div> All
+          </div>
+          <div class="filter-chip" onclick="setFilter(this,'','substack')">
+            <div class="filter-dot" style="background:#FDA4AF"></div> Substackers
+          </div>
+          <div class="filter-chip" onclick="setFilter(this,'bills_votes','')">
+            <div class="filter-dot" style="background:#60A5FA"></div> Bills &amp; Votes
+          </div>
+          <div class="filter-chip" onclick="setFilter(this,'executive_orders','')">
+            <div class="filter-dot" style="background:#FCD34D"></div> Exec Orders
+          </div>
+          <div class="filter-chip" onclick="setFilter(this,'court_rulings','')">
+            <div class="filter-dot" style="background:#C4B5FD"></div> Court Rulings
+          </div>
+          <div class="filter-chip" onclick="setFilter(this,'government_spending','')">
+            <div class="filter-dot" style="background:#6EE7B7"></div> Spending
+          </div>
+        </div>
+      </div>
+      <div class="feed-list" id="feed-list"></div>
     </div>
-  </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail-panel" id="detail-panel">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
+        <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.12">
+          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        </svg>
+        <p style="font-size:13px;color:#1E2A3B;font-weight:500">Select an article to read</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
 
 </div>
 
@@ -224,10 +223,9 @@ function navigate(view) {
   searchQuery = '';
   document.getElementById('search-input').value = '';
 
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.pill-link').forEach(el => el.classList.remove('active'));
   document.getElementById(`nav-${view}`).classList.add('active');
-  document.getElementById('sidebar-filters').style.display = view === 'home' ? '' : 'none';
-  document.getElementById('feed-count').textContent = '';
+  document.getElementById('feed-filters').style.display = view === 'home' ? '' : 'none';
 
   showEmptyDetail();
 
@@ -242,7 +240,7 @@ function setFilter(el, cat, source) {
   currentCategory = cat;
   currentSource   = source;
   selectedId      = null;
-  document.querySelectorAll('.filter-item').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.filter-chip').forEach(f => f.classList.remove('active'));
   el.classList.add('active');
   showEmptyDetail();
   loadFeed();
@@ -266,7 +264,8 @@ async function loadFeed() {
     const data = await res.json();
     allArticles = data.articles || [];
     renderFeed(allArticles);
-  } catch {
+  } catch(e) {
+    console.error('Feed fetch failed:', e);
     document.getElementById('feed-list').innerHTML = errMsg('Cannot connect to backend on port 3000.');
   }
 }
@@ -279,7 +278,7 @@ function renderFeed(articles) {
         (a.source||'').toLowerCase().includes(searchQuery))
     : articles;
 
-  document.getElementById('feed-count').textContent = `${filtered.length} article${filtered.length !== 1 ? 's' : ''}`;
+  
 
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No articles found.');
@@ -402,7 +401,7 @@ function renderDigest(groups) {
     : groups;
 
   const total = filtered.reduce((n, g) => n + g.articles.length, 0);
-  document.getElementById('feed-count').textContent = `${total} article${total !== 1 ? 's' : ''}`;
+  
 
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No digest yet.');
@@ -444,7 +443,7 @@ async function loadAuthorsView() {
     const data    = await res.json();
     const authors = data.authors || [];
 
-    document.getElementById('feed-count').textContent = `${authors.length} author${authors.length !== 1 ? 's' : ''}`;
+    
 
     list.innerHTML = `
     <div style="padding:14px;border-bottom:1px solid #0D1117">

@@ -26,13 +26,15 @@ function stripHtml(html) {
 async function generateBriefAndCategory(title, rawContent) {
   const content = rawContent ? stripHtml(rawContent).slice(0, 3000) : '';
 
-  const response = await client.messages.create({
-    model: 'claude-haiku-4-5',
-    max_tokens: 300,
-    messages: [
-      {
-        role: 'user',
-        content: `You are an analyst for a serious political news app called GovWatch.
+  let response;
+  try {
+    response = await client.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 300,
+      messages: [
+        {
+          role: 'user',
+          content: `You are an analyst for a serious political news app called GovWatch.
 
 Given the article below, respond with ONLY valid JSON — no markdown fences, no explanation:
 {
@@ -42,9 +44,13 @@ Given the article below, respond with ONLY valid JSON — no markdown fences, no
 
 Title: ${title}
 Content: ${content}`,
-      },
-    ],
-  });
+        },
+      ],
+    });
+  } catch (err) {
+    console.warn('[Claude] API call failed, skipping brief:', err.message);
+    return { brief: null, category: 'bills_votes' };
+  }
 
   const raw = response.content[0].text.trim();
   // Strip accidental markdown code fences

@@ -43,13 +43,13 @@ async function pollCourtListener() {
         ? `https://www.courtlistener.com${cluster.absolute_url}`
         : null;
 
-      const { brief } = await generateBriefAndCategory(title, content);
+      const { brief, category } = await generateBriefAndCategory(title, content);
 
       await pool.query(
         `INSERT INTO articles
            (external_id, title, content, ai_brief, category, source, source_url, published_at)
-         VALUES ($1, $2, $3, $4, 'court_rulings', 'courtlistener', $5, $6)`,
-        [externalId, title, content, brief, sourceUrl, publishedAt]
+         VALUES ($1, $2, $3, $4, $5, 'courtlistener', $6, $7)`,
+        [externalId, title, content, brief, category || 'court_rulings', sourceUrl, publishedAt]
       );
 
       console.log(`[CourtListener] ✓ Ingested: "${title}"`);

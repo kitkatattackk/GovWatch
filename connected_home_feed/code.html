@@ -2,15 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=390, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>GovWatch - Home Feed</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
 <style>
   * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
-  body { background: #0B0F1A; color: #F1F5F9; font-family: 'Inter', sans-serif; max-width: 390px; margin: 0 auto; min-height: 100vh; }
+  html, body { height: 100%; margin: 0; background: #1e1e1e; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; }
+  .device { position: relative; width: 393px; height: 852px; background: #1C1C1E; border-radius: 50px; border: 1.5px solid #3D3D3D; box-shadow: 0 0 0 1px #000, 0 40px 120px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0; }
+  .btn-vol-up, .btn-vol-dn { position: absolute; left: -3px; width: 3px; background: #2C2C2E; border-radius: 2px 0 0 2px; }
+  .btn-vol-up { top: 120px; height: 36px; }
+  .btn-vol-dn { top: 172px; height: 36px; }
+  .btn-power { position: absolute; right: -3px; top: 140px; width: 3px; height: 60px; background: #2C2C2E; border-radius: 0 2px 2px 0; }
+  .dynamic-island { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 200; }
+  .phone { width: 100%; height: 100%; background: #0B0F1A; color: #F1F5F9; display: flex; flex-direction: column; overflow: hidden; }
+  .phone-scroll { flex: 1; overflow-y: auto; }
+  .phone-scroll::-webkit-scrollbar { display: none; }
   .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-size: 22px; }
-  ::-webkit-scrollbar { display: none; }
   .tag-bills_votes        { background: rgba(59,130,246,0.12); color: #93C5FD; border: 1px solid rgba(59,130,246,0.25); }
   .tag-executive_orders   { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.25); }
   .tag-court_rulings      { background: rgba(167,139,250,0.12); color: #C4B5FD; border: 1px solid rgba(167,139,250,0.25); }
@@ -25,83 +33,94 @@
 </head>
 <body>
 
-<!-- Status Bar -->
-<div class="flex items-center justify-between px-5 py-2 text-[11px] font-medium text-slate-500" style="background:#0B0F1A">
-  <span class="font-semibold text-slate-300" id="clock">9:41</span>
-  <div class="flex items-center gap-2">
-    <span class="msym" style="font-size:13px">signal_cellular_alt</span>
-    <span class="msym" style="font-size:13px">wifi</span>
-    <span class="msym" style="font-size:13px">battery_5_bar</span>
-  </div>
-</div>
+<div class="device">
+  <div class="dynamic-island"></div>
+  <div class="btn-vol-up"></div>
+  <div class="btn-vol-dn"></div>
+  <div class="btn-power"></div>
+<div class="phone">
 
-<!-- Top App Bar -->
-<header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-[#1A2235]" style="background:rgba(11,15,26,0.97);backdrop-filter:blur(12px)">
-  <div class="flex items-center gap-2.5">
-    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
-      <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
+  <!-- Status Bar -->
+  <div class="flex items-center justify-between px-5 py-2 text-[11px] font-medium text-slate-500 shrink-0" style="background:#0B0F1A">
+    <span class="font-semibold text-slate-300" id="clock">9:41</span>
+    <div class="flex items-center gap-2">
+      <span class="msym" style="font-size:13px">signal_cellular_alt</span>
+      <span class="msym" style="font-size:13px">wifi</span>
+      <span class="msym" style="font-size:13px">battery_5_bar</span>
     </div>
-    <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
   </div>
-  <div class="flex items-center gap-0.5">
-    <button class="p-2 rounded-full text-slate-400 active:bg-white/5">
-      <span class="msym">search</span>
-    </button>
-    <button class="p-2 rounded-full text-slate-400 active:bg-white/5 relative">
-      <span class="msym">notifications</span>
-      <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-[#0B0F1A]" style="background:#3B82F6"></span>
-    </button>
+
+  <!-- Top App Bar -->
+  <header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-[#1A2235]" style="background:rgba(11,15,26,0.97)">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
+        <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
+      </div>
+      <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+    </div>
+    <div class="flex items-center gap-0.5">
+      <button class="p-2 rounded-full text-slate-400 active:bg-white/5">
+        <span class="msym">search</span>
+      </button>
+      <button class="p-2 rounded-full text-slate-400 active:bg-white/5 relative">
+        <span class="msym">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-[#0B0F1A]" style="background:#3B82F6"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter Chips -->
+  <div class="shrink-0 flex gap-2 px-4 py-3 overflow-x-auto" style="scrollbar-width:none" id="chips">
+    <button class="rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap chip-active" data-cat="" data-source="">All</button>
+    <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="" data-source="substack">Substackers</button>
+    <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="bills_votes" data-source="">Bills &amp; Votes</button>
+    <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="executive_orders" data-source="">Exec Orders</button>
+    <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="court_rulings" data-source="">Court Rulings</button>
+    <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="government_spending" data-source="">Spending</button>
   </div>
-</header>
 
-<!-- Filter Chips -->
-<div class="flex gap-2 px-4 py-3 overflow-x-auto" style="scrollbar-width:none" id="chips">
-  <button class="rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap chip-active" data-cat="">All</button>
-  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="bills_votes">Bills &amp; Votes</button>
-  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="executive_orders">Exec Orders</button>
-  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="court_rulings">Court Rulings</button>
-  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="government_spending">Spending</button>
-  <button class="rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap chip-inactive" data-cat="opinion">Opinion</button>
-</div>
+  <!-- Scrollable Feed -->
+  <div class="phone-scroll">
+    <!-- Error Banner (hidden by default) -->
+    <div id="error-banner" class="hidden mx-4 mt-2 p-3 rounded-xl text-sm text-red-300 border border-red-900/50" style="background:rgba(127,29,29,0.3)">
+      <span class="msym align-middle mr-1" style="font-size:16px">error_outline</span>
+      Couldn't load articles. Is the backend running on port 3000?
+    </div>
 
-<!-- Feed -->
-<main class="px-4 pb-28 space-y-3" id="feed">
-  <!-- Skeleton loaders -->
-  <div class="skeleton h-48 w-full"></div>
-  <div class="skeleton h-48 w-full"></div>
-  <div class="skeleton h-48 w-full"></div>
-</main>
-
-<!-- Error Banner (hidden by default) -->
-<div id="error-banner" class="hidden mx-4 mt-2 p-3 rounded-xl text-sm text-red-300 border border-red-900/50" style="background:rgba(127,29,29,0.3)">
-  <span class="msym align-middle mr-1" style="font-size:16px">error_outline</span>
-  Couldn't load articles. Is the backend running on port 3000?
-</div>
-
-<!-- Bottom Navigation -->
-<nav class="fixed bottom-0 left-0 right-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235;max-width:390px;margin:0 auto">
-  <div class="flex justify-around items-center">
-    <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
-      <span class="msym" style="font-variation-settings:'FILL' 1">home</span>
-      <span class="text-[10px] font-semibold">Home</span>
-    </a>
-    <a href="../connected_daily_digest/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">auto_stories</span>
-      <span class="text-[10px] font-medium">Digest</span>
-    </a>
-    <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">group</span>
-      <span class="text-[10px] font-medium">Authors</span>
-    </a>
-    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">notifications</span>
-      <span class="text-[10px] font-medium">Alerts</span>
-    </a>
+    <main class="px-4 pt-2 pb-6 space-y-3" id="feed">
+      <div class="skeleton h-48 w-full"></div>
+      <div class="skeleton h-48 w-full"></div>
+      <div class="skeleton h-48 w-full"></div>
+    </main>
   </div>
-</nav>
+
+  <!-- Bottom Navigation -->
+  <nav class="shrink-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235">
+    <div class="flex justify-around items-center">
+      <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
+        <span class="msym" style="font-variation-settings:'FILL' 1">home</span>
+        <span class="text-[10px] font-semibold">Home</span>
+      </a>
+      <a href="../connected_daily_digest/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">auto_stories</span>
+        <span class="text-[10px] font-medium">Digest</span>
+      </a>
+      <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">group</span>
+        <span class="text-[10px] font-medium">Authors</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">notifications</span>
+        <span class="text-[10px] font-medium">Alerts</span>
+      </a>
+    </div>
+  </nav>
+
+</div><!-- /phone -->
+</div><!-- /device -->
 
 <script>
-const API = 'https://govwatch-production-ddaf.up.railway.app';
+const API = 'http://localhost:3000';
 
 // Clock
 function updateClock() {
@@ -116,6 +135,7 @@ setInterval(updateClock, 10000);
 // Relative time
 function relativeTime(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
+  if (diff < 0) return 'recently';
   const mins = Math.floor(diff / 60000);
   if (mins < 1)  return 'just now';
   if (mins < 60) return `${mins}m ago`;
@@ -199,12 +219,12 @@ function escHtml(str) {
 }
 
 let currentCategory = '';
+let currentSource = '';
 
-async function loadFeed(category = '') {
+async function loadFeed(category = '', source = '') {
   const feed = document.getElementById('feed');
   const errorBanner = document.getElementById('error-banner');
 
-  // Show skeletons
   feed.innerHTML = `
     <div class="skeleton h-48 w-full"></div>
     <div class="skeleton h-48 w-full"></div>
@@ -213,10 +233,10 @@ async function loadFeed(category = '') {
   errorBanner.classList.add('hidden');
 
   try {
-    const url = category
-      ? `${API}/api/feed?category=${category}&page_size=30`
-      : `${API}/api/feed?page_size=30`;
-    const res = await fetch(url);
+    const params = new URLSearchParams({ page_size: 30 });
+    if (category) params.set('category', category);
+    if (source) params.set('source', source);
+    const res = await fetch(`${API}/api/feed?${params}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const articles = data.articles || [];
@@ -249,7 +269,8 @@ document.getElementById('chips').addEventListener('click', (e) => {
   btn.className = 'rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap chip-active';
 
   currentCategory = btn.dataset.cat;
-  loadFeed(currentCategory);
+  currentSource = btn.dataset.source;
+  loadFeed(currentCategory, currentSource);
 });
 
 // Initial load

@@ -51,9 +51,6 @@ async function pollFederalRegister() {
       const content = doc.abstract || doc.title;
       const { brief } = await generateBriefAndCategory(title, content);
 
-      const publishedAt = doc.signing_date
-        ? new Date(doc.signing_date)
-        : new Date(doc.publication_date);
       await pool.query(
         `INSERT INTO articles
            (external_id, title, content, ai_brief, category, source, source_url, published_at)

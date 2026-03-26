@@ -2,84 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=390, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>GovWatch - Daily Digest</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
 <style>
   * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
-  body { background: #0B0F1A; color: #F1F5F9; font-family: 'Inter', sans-serif; max-width: 390px; margin: 0 auto; min-height: 100vh; }
+  html, body { height: 100%; margin: 0; background: #1e1e1e; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; }
+  .device { position: relative; width: 393px; height: 852px; background: #1C1C1E; border-radius: 50px; border: 1.5px solid #3D3D3D; box-shadow: 0 0 0 1px #000, 0 40px 120px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0; }
+  .btn-vol-up, .btn-vol-dn { position: absolute; left: -3px; width: 3px; background: #2C2C2E; border-radius: 2px 0 0 2px; }
+  .btn-vol-up { top: 120px; height: 36px; }
+  .btn-vol-dn { top: 172px; height: 36px; }
+  .btn-power { position: absolute; right: -3px; top: 140px; width: 3px; height: 60px; background: #2C2C2E; border-radius: 0 2px 2px 0; }
+  .dynamic-island { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 200; }
+  .phone { width: 100%; height: 100%; background: #0B0F1A; color: #F1F5F9; display: flex; flex-direction: column; overflow: hidden; }
+  .phone-scroll { flex: 1; overflow-y: auto; }
+  .phone-scroll::-webkit-scrollbar { display: none; }
   .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-size: 22px; }
-  ::-webkit-scrollbar { display: none; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .skeleton { background: #1A2235; border-radius: 8px; animation: pulse 1.5s ease-in-out infinite; }
 </style>
 </head>
 <body>
+<div class="device">
+  <div class="dynamic-island"></div>
+  <div class="btn-vol-up"></div>
+  <div class="btn-vol-dn"></div>
+  <div class="btn-power"></div>
+<div class="phone">
 
-<!-- Status Bar -->
-<div class="flex items-center justify-between px-5 py-2 text-[11px] font-medium" style="background:#0B0F1A;color:#64748B">
-  <span class="font-semibold" style="color:#CBD5E1" id="clock">9:41</span>
-  <div class="flex items-center gap-2">
-    <span class="msym" style="font-size:13px">signal_cellular_alt</span>
-    <span class="msym" style="font-size:13px">wifi</span>
-    <span class="msym" style="font-size:13px">battery_5_bar</span>
-  </div>
-</div>
-
-<!-- Top App Bar -->
-<header class="sticky top-0 z-50 px-4 pt-3 pb-4 border-b" style="background:rgba(11,15,26,0.97);backdrop-filter:blur(12px);border-color:#1A2235">
-  <div class="flex items-center justify-between mb-0.5">
-    <div class="flex items-center gap-2.5">
-      <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
-        <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
-      </div>
-      <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+  <!-- Status Bar -->
+  <div class="shrink-0 flex items-center justify-between px-5 py-2 text-[11px] font-medium" style="background:#0B0F1A;color:#64748B">
+    <span class="font-semibold" style="color:#CBD5E1" id="clock">9:41</span>
+    <div class="flex items-center gap-2">
+      <span class="msym" style="font-size:13px">signal_cellular_alt</span>
+      <span class="msym" style="font-size:13px">wifi</span>
+      <span class="msym" style="font-size:13px">battery_5_bar</span>
     </div>
-    <button class="p-2 rounded-full text-slate-400">
-      <span class="msym">search</span>
-    </button>
   </div>
-  <div class="mt-3">
-    <p class="text-[11px] font-semibold uppercase tracking-widest mb-0.5" style="color:#3B82F6" id="date-label">—</p>
-    <h1 class="text-2xl font-extrabold text-white tracking-tight">Daily Digest</h1>
-    <p class="text-[12px] mt-0.5" style="color:#64748B" id="total-label">Loading...</p>
-  </div>
-</header>
 
-<!-- Content -->
-<main class="pb-28" id="digest-content">
-  <div class="mt-4 mx-4 space-y-3">
-    <div class="skeleton h-40 w-full"></div>
-    <div class="skeleton h-40 w-full"></div>
-    <div class="skeleton h-40 w-full"></div>
-  </div>
-</main>
+  <!-- Top App Bar -->
+  <header class="shrink-0 px-4 pt-3 pb-4 border-b" style="background:rgba(11,15,26,0.97);border-color:#1A2235">
+    <div class="flex items-center justify-between mb-0.5">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#2563EB">
+          <span class="text-white font-black text-sm" style="letter-spacing:-0.5px">G</span>
+        </div>
+        <span class="text-white font-bold text-[19px] tracking-tight">GovWatch</span>
+      </div>
+      <button class="p-2 rounded-full text-slate-400">
+        <span class="msym">search</span>
+      </button>
+    </div>
+    <div class="mt-3">
+      <p class="text-[11px] font-semibold uppercase tracking-widest mb-0.5" style="color:#3B82F6" id="date-label">—</p>
+      <h1 class="text-2xl font-extrabold text-white tracking-tight">Daily Digest</h1>
+      <p class="text-[12px] mt-0.5" style="color:#64748B" id="total-label">Loading...</p>
+    </div>
+  </header>
 
-<!-- Bottom Navigation -->
-<nav class="fixed bottom-0 left-0 right-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235;max-width:390px;margin:0 auto">
-  <div class="flex justify-around items-center">
-    <a href="../connected_home_feed/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">home</span>
-      <span class="text-[10px] font-medium">Home</span>
-    </a>
-    <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
-      <span class="msym" style="font-variation-settings:'FILL' 1">auto_stories</span>
-      <span class="text-[10px] font-semibold">Digest</span>
-    </a>
-    <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">group</span>
-      <span class="text-[10px] font-medium">Authors</span>
-    </a>
-    <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
-      <span class="msym">notifications</span>
-      <span class="text-[10px] font-medium">Alerts</span>
-    </a>
+  <!-- Scrollable Content -->
+  <div class="phone-scroll">
+    <main class="pb-6" id="digest-content">
+      <div class="mt-4 mx-4 space-y-3">
+        <div class="skeleton h-40 w-full"></div>
+        <div class="skeleton h-40 w-full"></div>
+        <div class="skeleton h-40 w-full"></div>
+      </div>
+    </main>
   </div>
-</nav>
+
+  <!-- Bottom Navigation -->
+  <nav class="shrink-0 border-t pt-2 pb-6 px-2" style="background:#0B0F1A;border-color:#1A2235">
+    <div class="flex justify-around items-center">
+      <a href="../connected_home_feed/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">home</span>
+        <span class="text-[10px] font-medium">Home</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-0.5" style="color:#3B82F6">
+        <span class="msym" style="font-variation-settings:'FILL' 1">auto_stories</span>
+        <span class="text-[10px] font-semibold">Digest</span>
+      </a>
+      <a href="../connected_author_list/code.html" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">group</span>
+        <span class="text-[10px] font-medium">Authors</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-0.5 text-slate-500">
+        <span class="msym">notifications</span>
+        <span class="text-[10px] font-medium">Alerts</span>
+      </a>
+    </div>
+  </nav>
+
+</div><!-- /phone -->
+</div><!-- /device -->
 
 <script>
-const API = 'https://govwatch-production-ddaf.up.railway.app';
+const API = 'http://localhost:3000';
 
 function updateClock() {
   const now = new Date();
@@ -91,6 +110,7 @@ setInterval(updateClock, 10000);
 
 function relativeTime(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
+  if (diff < 0) return 'recently';
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins}m ago`;
@@ -162,12 +182,10 @@ async function loadDigest() {
   const content = document.getElementById('digest-content');
 
   try {
-    // Try today's pre-computed digest first
     let res = await fetch(`${API}/api/digest/today`);
     let data = await res.json();
     let groups = data.digest || [];
 
-    // Fall back to live 24h digest if no pre-computed data
     if (groups.length === 0) {
       res = await fetch(`${API}/api/digest`);
       data = await res.json();

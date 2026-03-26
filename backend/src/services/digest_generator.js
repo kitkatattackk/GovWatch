@@ -46,21 +46,27 @@ async function generateDailyDigest(date = new Date()) {
 
     console.log(`[Digest] Writing ${label} summary (${articles.length} articles)...`);
 
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5',
-      max_tokens: 350,
-      messages: [
-        {
-          role: 'user',
-          content: `You write the daily digest for GovWatch, a serious political news app.
+    let response;
+    try {
+      response = await client.messages.create({
+        model: 'claude-haiku-4-5',
+        max_tokens: 350,
+        messages: [
+          {
+            role: 'user',
+            content: `You write the daily digest for GovWatch, a serious political news app.
 
 Write a 3-4 sentence summary of today's "${label}" news based on these articles. Be direct and factual — focus on the most significant developments and what they mean for citizens. No filler, no headlines, just a tight paragraph.
 
 Articles:
 ${articleList}`,
-        },
-      ],
-    });
+          },
+        ],
+      });
+    } catch (err) {
+      console.warn(`[Digest] Claude API failed for ${label}, skipping:`, err.message);
+      continue;
+    }
 
     const summary = response.content[0].text.trim();
 

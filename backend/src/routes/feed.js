@@ -7,22 +7,29 @@ const router = express.Router();
 // Query params: ?category=bills_votes&limit=20&offset=0
 router.get('/', async (req, res) => {
   try {
-    const { category, limit = 10, offset = 0, days = 2 } = req.query;
+    const { category, source, limit = 30, page_size, offset = 0, days = 30 } = req.query;
+    const effectiveLimit = page_size || limit;
 
     const params = [];
     const conditions = [];
 
-    // Default: last N days only
+    // Last N days only, and no future-dated articles
     params.push(parseInt(days, 10));
     conditions.push(`a.published_at >= NOW() - INTERVAL '1 day' * $${params.length}`);
+    conditions.push(`a.published_at <= NOW()`);
 
     if (category) {
       params.push(category);
       conditions.push(`a.category = $${params.length}`);
     }
 
+    if (source) {
+      params.push(source);
+      conditions.push(`a.source = $${params.length}`);
+    }
+
     const where = `WHERE ${conditions.join(' AND ')}`;
-    params.push(parseInt(limit, 10), parseInt(offset, 10));
+    params.push(parseInt(effectiveLimit, 10), parseInt(offset, 10));
 
     const { rows } = await pool.query(
       `SELECT
@@ -54,7 +61,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/articles/:id
-router.get('/articles/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT

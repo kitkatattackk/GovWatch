@@ -6,72 +6,140 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-  html, body { height: 100%; background: #080B13; color: #F1F5F9; font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
+  html, body { height: 100%; background: linear-gradient(145deg, #C2CEDF 0%, #A8B8CE 100%); color: #0F172A; font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
 
-  .app { display: flex; flex-direction: column; height: 100vh; }
+  .app { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
-  /* ── Top Bar (draggable chrome) ── */
-  .topbar { height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 20px; -webkit-app-region: drag; background: #080B13; }
+  /* ── Top Bar ── */
+  .topbar { height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 20px; -webkit-app-region: drag; background: rgba(255,255,255,0.35); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.4); }
 
   /* ── Pill Nav ── */
-  .pill-nav { display: flex; align-items: center; gap: 2px; background: #0F1521; border: 1px solid #1A2235; border-radius: 100px; padding: 4px 5px; -webkit-app-region: no-drag; box-shadow: 0 2px 16px rgba(0,0,0,0.5); }
+  .pill-nav { display: flex; align-items: center; gap: 2px; background: #FFFFFF; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid #E8EDF3; border-radius: 100px; padding: 4px 5px; -webkit-app-region: no-drag; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
   .pill-logo { display: flex; align-items: center; gap: 7px; padding: 5px 14px 5px 10px; cursor: default; }
-  .pill-logo span { font-size: 14px; font-weight: 700; color: #E2E8F0; letter-spacing: -0.3px; }
-  .pill-sep { width: 1px; height: 18px; background: #1E2A3B; margin: 0 3px; flex-shrink: 0; }
-  .pill-link { padding: 6px 15px; border-radius: 100px; font-size: 13px; font-weight: 500; color: #4B5A6E; cursor: pointer; transition: all 0.12s; white-space: nowrap; -webkit-app-region: no-drag; }
-  .pill-link:hover { color: #94A3B8; background: rgba(255,255,255,0.04); }
-  .pill-link.active { color: #E2E8F0; background: #1A2640; font-weight: 600; }
+  .pill-logo span { font-size: 14px; font-weight: 700; color: #0F172A; letter-spacing: -0.3px; }
+  .pill-sep { width: 1px; height: 18px; background: #E8EDF3; margin: 0 3px; flex-shrink: 0; }
+  .pill-link { padding: 6px 15px; border-radius: 100px; font-size: 13px; font-weight: 500; color: #64748B; cursor: pointer; transition: all 0.15s; white-space: nowrap; -webkit-app-region: no-drag; }
+  .pill-link:hover { color: #0F172A; background: rgba(0,0,0,0.04); }
+  .pill-link.active { color: #FFFFFF; background: #2563EB; font-weight: 600; box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
 
   /* ── Content area ── */
-  .content { display: flex; flex: 1; overflow: hidden; border-top: 1px solid #0D1117; }
+  .content { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 1; }
+
+  /* ── Sidebar ── */
+  .sidebar { width: 56px; flex-shrink: 0; background: rgba(255,255,255,0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-right: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; align-items: center; -webkit-app-region: drag; position: relative; z-index: 5; }
+  .sidebar-logo { width: 100%; height: 85px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+  .sidebar-nav { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0; flex: 1; width: 100%; }
+  .sidebar-bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 14px; width: 100%; }
+  .sidebar-item { width: calc(100% - 8px); height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; -webkit-app-region: no-drag; position: relative; color: #5A6A80; }
+  .sidebar-item:hover { color: #2D3E52; background: rgba(0,0,0,0.07); }
+  .sidebar-item.active { color: #2563EB; background: rgba(37,99,235,0.12); }
+  .sidebar-item .msym { font-size: 22px; }
+
+  /* Tooltip */
+  .sidebar-item::after { content: attr(data-tip); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: #0F172A; color: white; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 20px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; font-family: 'Inter', sans-serif; }
+  .sidebar-item:hover::after { opacity: 1; }
 
   /* ── Feed Panel ── */
-  .feed-panel { width: 380px; flex-shrink: 0; border-right: 1px solid #111827; display: flex; flex-direction: column; background: #0B0F1A; }
-  .feed-header { padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; border-bottom: 1px solid #0D1117; background: #0B0F1A; flex-shrink: 0; }
-  .feed-search { display: flex; align-items: center; gap: 8px; background: #111827; border: 1px solid #1A2235; border-radius: 8px; padding: 6px 10px; }
+  .feed-panel { width: 360px; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,0.4); display: flex; flex-direction: column; background: rgba(246,248,251,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .feed-header { padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; border-bottom: 1px solid #E8EDF3; background: #FFFFFF; flex-shrink: 0; }
+  .feed-search { display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid #E8EDF3; border-radius: 10px; padding: 7px 10px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .feed-search:focus-within { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
 
   /* ── Filter chips ── */
   .feed-filters { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 2px; padding-right: 8px; }
   .feed-filters::-webkit-scrollbar { display: none; }
-  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #4B5568; border: 1px solid #1A2235; white-space: nowrap; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
-  .filter-chip:hover { color: #94A3B8; border-color: #2D3F55; }
-  .filter-chip.active { color: #E2E8F0; border-color: #2D3F55; background: #141E30; font-weight: 600; }
+  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #64748B; border: 1px solid #E8EDF3; white-space: nowrap; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
+  .filter-chip:hover { color: #0F172A; border-color: #CBD5E1; }
+  .filter-chip.active { color: #1D4ED8; border-color: #BFDBFE; background: #EFF6FF; font-weight: 600; }
   .filter-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-  .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #F1F5F9; font-family: 'Inter', sans-serif; -webkit-app-region: no-drag; }
-  .feed-list { flex: 1; overflow-y: auto; }
+  .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #0F172A; font-family: 'Inter', sans-serif; -webkit-app-region: no-drag; }
+  .feed-list-wrap { flex: 1; position: relative; overflow: hidden; }
+  .feed-list-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 72px; background: linear-gradient(to bottom, transparent, rgba(236,241,248,0.9)); pointer-events: none; z-index: 2; }
+  .feed-list { height: 100%; overflow-y: auto; }
   .feed-list::-webkit-scrollbar { display: none; }
 
-  .feed-card { padding: 11px 14px; border-bottom: 1px solid #0D1117; cursor: pointer; transition: background 0.1s; -webkit-app-region: no-drag; }
-  .feed-card:hover { background: rgba(255,255,255,0.025); }
-  .feed-card.selected { background: rgba(37,99,235,0.1); border-left: 2px solid #2563EB; padding-left: 12px; }
+  .feed-card { padding: 12px 14px; border-bottom: 1px solid #F0F4F8; cursor: pointer; transition: background 0.12s; -webkit-app-region: no-drag; position: relative; background: #FFFFFF; }
+  .feed-card:hover { background: #FAFBFD; }
+  .feed-card.selected { background: #F0F6FF; padding-left: 12px; }
+  .feed-card.selected::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #3B82F6, #1D4ED8); border-radius: 0 2px 2px 0; }
 
-  .digest-section-header { padding: 8px 14px 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: #0B0F1A; z-index: 1; border-bottom: 1px solid #0D1117; }
+  .digest-section-header { padding: 8px 14px 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: rgba(246,248,251,0.95); backdrop-filter: blur(8px); z-index: 1; border-bottom: 1px solid #E8EDF3; }
 
   /* ── Detail Panel ── */
-  .detail-panel { flex: 1; overflow-y: auto; background: #080B13; }
-  .detail-panel::-webkit-scrollbar { width: 6px; }
+  .detail-panel { flex: 1; overflow-y: auto; background: #FFFFFF; }
+  .detail-panel::-webkit-scrollbar { width: 5px; }
   .detail-panel::-webkit-scrollbar-track { background: transparent; }
-  .detail-panel::-webkit-scrollbar-thumb { background: #1A2235; border-radius: 3px; }
-  .detail-content { max-width: 740px; margin: 0 auto; padding: 40px 52px; }
+  .detail-panel::-webkit-scrollbar-thumb { background: #E8EDF3; border-radius: 3px; }
+  .detail-content { max-width: 740px; margin: 0 auto; padding: 44px 56px; }
 
   /* ── Tags ── */
-  .cat-tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cat-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── AI Brief card ── */
+  .brief-card { background: #F8FAFF; border: 1px solid #DBEAFE; border-radius: 12px; padding: 16px 18px; margin-bottom: 24px; }
+
+  /* ── Article body HTML ── */
+  .article-body { font-size: 16px; line-height: 1.8; color: #1E293B; margin-bottom: 36px; }
+  .article-body p { margin-bottom: 1.2em; }
+  .article-body h1, .article-body h2 { font-size: 1.2em; font-weight: 700; color: #0F172A; margin: 1.6em 0 0.5em; line-height: 1.3; }
+  .article-body h3, .article-body h4 { font-size: 1em; font-weight: 700; color: #0F172A; margin: 1.4em 0 0.4em; }
+  .article-body strong, .article-body b { font-weight: 700; color: #0F172A; }
+  .article-body em, .article-body i { font-style: italic; }
+  .article-body a { color: #2563EB; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .article-body a:hover { color: #1D4ED8; }
+  .article-body blockquote { border-left: 3px solid #BFDBFE; padding: 4px 0 4px 16px; margin: 1.2em 0; color: #475569; font-style: italic; }
+  .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.2em; }
+  .article-body li { margin-bottom: 0.4em; }
+  .article-body img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
+  .article-body hr { border: none; border-top: 1px solid #E8EDF3; margin: 1.6em 0; }
+  .article-body figure { margin: 1.2em 0; }
+  .article-body figcaption { font-size: 12px; color: #94A3B8; text-align: center; margin-top: 6px; }
+
+  /* ── Read button ── */
+  .read-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: white; border: none; border-radius: 10px; padding: 11px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+  .read-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+  .read-btn:active { transform: translateY(0); }
 
   /* ── Toggles ── */
-  .toggle { position: relative; width: 36px; height: 20px; border-radius: 10px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; background: #1E2A3B; -webkit-app-region: no-drag; }
+  .toggle { position: relative; width: 36px; height: 20px; border-radius: 10px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; background: #E2E8F0; -webkit-app-region: no-drag; }
   .toggle.on { background: #2563EB; }
-  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #F1F5F9; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #FFFFFF; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
   .toggle.on::after { transform: translateX(16px); }
 
+  /* ── Settings panel ── */
+  .settings-wrap { max-width: 600px; margin: 0 auto; padding: 36px 48px; animation: fadeUp 0.2s ease-out; }
+  .settings-section { background: #FFFFFF; border-radius: 14px; border: 1px solid #E8EDF3; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .settings-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94A3B8; padding: 14px 18px 10px; border-bottom: 1px solid #F0F4F8; }
+  .settings-row { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-bottom: 1px solid #F0F4F8; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .settings-row-label { flex: 1; }
+  .settings-row-label strong { display: block; font-size: 13px; font-weight: 600; color: #0F172A; margin-bottom: 1px; }
+  .settings-row-label span { font-size: 11px; color: #94A3B8; }
+  .settings-status { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .settings-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+  .btn-primary { background: #2563EB; color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-primary:hover { background: #1D4ED8; }
+  .btn-primary:disabled { background: #93C5FD; cursor: not-allowed; box-shadow: none; }
+  .btn-ghost { background: #F1F5F9; color: #475569; }
+  .btn-ghost:hover { background: #E2E8F0; }
+  .settings-select { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 7px; padding: 6px 10px; font-size: 12px; color: #0F172A; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+
   /* ── Skeleton ── */
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .skeleton { background: #111827; border-radius: 5px; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{background:#E8EDF3} 50%{background:#F1F5F9} }
+  .skeleton { background: #E8EDF3; border-radius: 5px; animation: pulse 1.8s ease-in-out infinite; }
+
+  /* ── Fade-in ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .detail-content { animation: fadeUp 0.2s ease-out; }
 
   .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; }
 
   button { cursor: pointer; font-family: 'Inter', sans-serif; }
   input { font-family: 'Inter', sans-serif; }
-  input::placeholder { color: #334155; }
+  input::placeholder { color: #94A3B8; }
 </style>
 </head>
 <body>
@@ -101,16 +169,48 @@
   <!-- ══ CONTENT ══ -->
   <div class="content">
 
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        </svg>
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item active" id="sidebar-home" data-tip="Home" onclick="navigate('home')">
+          <span class="msym">home</span>
+        </div>
+        <div class="sidebar-item" id="sidebar-digest" data-tip="Daily Digest" onclick="navigate('digest')">
+          <span class="msym">auto_stories</span>
+        </div>
+        <div class="sidebar-item" id="sidebar-authors" data-tip="Authors" onclick="navigate('authors')">
+          <span class="msym">group</span>
+        </div>
+        <div class="sidebar-item" id="sidebar-alerts" data-tip="Alerts" onclick="navigate('alerts')">
+          <span class="msym">notifications</span>
+        </div>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="sidebar-item" id="sidebar-settings" data-tip="Settings" style="color:#8899AA" onclick="openSettings()">
+          <span class="msym">settings</span>
+        </div>
+      </div>
+    </div>
+
     <!-- FEED PANEL -->
     <div class="feed-panel">
       <div class="feed-header">
         <div class="feed-search">
-          <span class="msym" style="font-size:15px;color:#334155">search</span>
+          <span class="msym" style="font-size:15px;color:#94A3B8">search</span>
           <input id="search-input" type="text" placeholder="Search..." oninput="onSearch(this.value)"/>
         </div>
         <div class="feed-filters" id="feed-filters">
           <div class="filter-chip active" onclick="setFilter(this,'','')">
-            <div class="filter-dot" style="background:#334155"></div> All
+            <div class="filter-dot" style="background:#94A3B8"></div> All
           </div>
           <div class="filter-chip" onclick="setFilter(this,'','substack')">
             <div class="filter-dot" style="background:#FDA4AF"></div> Substackers
@@ -129,20 +229,22 @@
           </div>
         </div>
       </div>
-      <div class="feed-list" id="feed-list"></div>
+      <div class="feed-list-wrap">
+        <div class="feed-list" id="feed-list"></div>
+      </div>
     </div>
 
     <!-- DETAIL PANEL -->
     <div class="detail-panel" id="detail-panel">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
-        <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.12">
+        <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.15">
           <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
           <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
           <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
           <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
           <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
         </svg>
-        <p style="font-size:13px;color:#1E2A3B;font-weight:500">Select an article to read</p>
+        <p style="font-size:13px;color:#94A3B8;font-weight:500">Select an article to read</p>
       </div>
     </div>
 
@@ -225,6 +327,11 @@ function navigate(view) {
 
   document.querySelectorAll('.pill-link').forEach(el => el.classList.remove('active'));
   document.getElementById(`nav-${view}`).classList.add('active');
+
+  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+  const sidebarEl = document.getElementById(`sidebar-${view}`);
+  if (sidebarEl) sidebarEl.classList.add('active');
+
   document.getElementById('feed-filters').style.display = view === 'home' ? '' : 'none';
 
   showEmptyDetail();
@@ -233,6 +340,180 @@ function navigate(view) {
   else if (view === 'digest')  loadDigest();
   else if (view === 'authors') loadAuthorsView();
   else if (view === 'alerts')  loadAlertsView();
+}
+
+// ─── SETTINGS ────────────────────────────────────────────────────
+function openSettings() {
+  document.querySelectorAll('.pill-link').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('sidebar-settings').classList.add('active');
+  document.getElementById('feed-filters').style.display = 'none';
+  document.getElementById('feed-list').innerHTML = '';
+  showEmptyDetail();
+  loadSettingsView();
+}
+
+async function loadSettingsView() {
+  const panel = document.getElementById('detail-panel');
+  panel.innerHTML = `<div class="settings-wrap"><div class="skeleton" style="height:28px;width:160px;margin-bottom:24px"></div>${[1,2,3].map(()=>`<div class="settings-section"><div style="height:40px"></div><div style="height:56px;border-top:1px solid #F0F4F8"></div><div style="height:56px;border-top:1px solid #F0F4F8"></div></div>`).join('')}</div>`;
+
+  const [settingsRes, healthRes] = await Promise.allSettled([
+    fetch(`${API}/api/settings`),
+    fetch(`${API}/health`),
+  ]);
+
+  const settings = settingsRes.status === 'fulfilled' && settingsRes.value.ok
+    ? await settingsRes.value.json()
+    : { sources: {}, feed: {} };
+
+  const healthy = healthRes.status === 'fulfilled' && healthRes.value.ok;
+  const healthData = healthy ? await healthRes.value.json() : null;
+
+  const sources = [
+    { key: 'substack',        label: 'Substack',         desc: 'Political writers & newsletters', icon: 'edit_note',       color: '#EFF6FF', iconColor: '#2563EB' },
+    { key: 'congress',        label: 'Congress.gov',     desc: 'Bills, votes, and legislation',   icon: 'account_balance', color: '#FFF7ED', iconColor: '#EA580C' },
+    { key: 'federalregister', label: 'Federal Register', desc: 'Executive orders & regulations',  icon: 'edit_document',   color: '#FFFBEB', iconColor: '#D97706' },
+    { key: 'courtlistener',   label: 'CourtListener',    desc: 'Court filings and rulings',       icon: 'gavel',           color: '#F5F3FF', iconColor: '#7C3AED' },
+    { key: 'usaspending',     label: 'USASpending',      desc: 'Government spending data',        icon: 'payments',        color: '#ECFDF5', iconColor: '#059669' },
+  ];
+
+  const feedDays = settings.feed?.days ?? 30;
+  const feedSize = settings.feed?.pageSize ?? 50;
+
+  panel.innerHTML = `
+  <div class="settings-wrap">
+    <h1 style="font-size:22px;font-weight:800;color:#0F172A;letter-spacing:-0.3px;margin-bottom:24px">Settings</h1>
+
+    <!-- Connection -->
+    <div class="settings-section">
+      <div class="settings-section-title">Backend</div>
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:${healthy ? '#ECFDF5' : '#FEF2F2'}">
+          <span class="msym" style="font-size:16px;color:${healthy ? '#059669' : '#DC2626'}">dns</span>
+        </div>
+        <div class="settings-row-label">
+          <strong>API Server</strong>
+          <span>${healthy ? `Connected · ${healthData?.timestamp ? new Date(healthData.timestamp).toLocaleTimeString() : ''}` : 'Not connected'}</span>
+        </div>
+        <div class="settings-status">
+          <div class="status-dot" style="background:${healthy ? '#22C55E' : '#EF4444'}"></div>
+          <span style="color:${healthy ? '#16A34A' : '#DC2626'};font-size:12px;font-weight:600">${healthy ? 'Online' : 'Offline'}</span>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:#EFF6FF">
+          <span class="msym" style="font-size:16px;color:#2563EB">refresh</span>
+        </div>
+        <div class="settings-row-label">
+          <strong>Refresh Now</strong>
+          <span>Trigger all enabled pollers immediately</span>
+        </div>
+        <button class="settings-btn btn-primary" id="poll-btn" onclick="triggerPoll()">
+          <span class="msym" style="font-size:14px">sync</span> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Sources -->
+    <div class="settings-section">
+      <div class="settings-section-title">Data Sources</div>
+      ${sources.map(s => `
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:${s.color}">
+          <span class="msym" style="font-size:16px;color:${s.iconColor}">${s.icon}</span>
+        </div>
+        <div class="settings-row-label">
+          <strong>${s.label}</strong>
+          <span>${s.desc}</span>
+        </div>
+        <div class="toggle ${settings.sources?.[s.key] !== false ? 'on' : ''}"
+          onclick="toggleSource('${s.key}', this)"></div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Feed Preferences -->
+    <div class="settings-section">
+      <div class="settings-section-title">Feed</div>
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:#F8FAFC">
+          <span class="msym" style="font-size:16px;color:#64748B">history</span>
+        </div>
+        <div class="settings-row-label">
+          <strong>History window</strong>
+          <span>How many days of articles to load</span>
+        </div>
+        <select class="settings-select" onchange="updateFeedSetting('days', this.value)">
+          ${[7,14,30,60,90].map(d => `<option value="${d}" ${feedDays == d ? 'selected' : ''}>${d} days</option>`).join('')}
+        </select>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:#F8FAFC">
+          <span class="msym" style="font-size:16px;color:#64748B">format_list_numbered</span>
+        </div>
+        <div class="settings-row-label">
+          <strong>Articles per load</strong>
+          <span>Maximum articles shown in feed</span>
+        </div>
+        <select class="settings-select" onchange="updateFeedSetting('pageSize', this.value)">
+          ${[25,50,100,200].map(n => `<option value="${n}" ${feedSize == n ? 'selected' : ''}>${n} articles</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="settings-section">
+      <div class="settings-section-title">About</div>
+      <div class="settings-row">
+        <div class="settings-row-icon" style="background:#EFF6FF">
+          <svg width="18" height="18" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
+            <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
+            <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
+            <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
+            <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+          </svg>
+        </div>
+        <div class="settings-row-label">
+          <strong>GovWatch</strong>
+          <span>Version 1.0.0</span>
+        </div>
+        <button class="settings-btn btn-ghost" onclick="openUrl('https://github.com/kitkatattackk/GovWatch')">
+          <span class="msym" style="font-size:14px">open_in_new</span> GitHub
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function toggleSource(key, toggleEl) {
+  toggleEl.classList.toggle('on');
+  const on = toggleEl.classList.contains('on');
+  await fetch(`${API}/api/settings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sources: { [key]: on } }),
+  });
+}
+
+async function updateFeedSetting(key, value) {
+  await fetch(`${API}/api/settings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ feed: { [key]: parseInt(value) } }),
+  });
+}
+
+async function triggerPoll() {
+  const btn = document.getElementById('poll-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="msym" style="font-size:14px;animation:spin 1s linear infinite">sync</span> Refreshing...';
+  try {
+    await fetch(`${API}/api/poll`, { method: 'POST' });
+    setTimeout(() => loadSettingsView(), 1000);
+  } catch {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="msym" style="font-size:14px">sync</span> Refresh';
+  }
 }
 
 // ─── Filter ──────────────────────────────────────────────────────
@@ -278,7 +559,7 @@ function renderFeed(articles) {
         (a.source||'').toLowerCase().includes(searchQuery))
     : articles;
 
-  
+
 
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No articles found.');
@@ -290,7 +571,7 @@ function renderFeed(articles) {
     const time     = relativeTime(a.published_at || a.created_at);
     const selected = a.id === selectedId ? ' selected' : '';
     const brief    = a.ai_brief
-      ? `<div style="font-size:11px;color:#475569;margin-top:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(a.ai_brief)}</div>`
+      ? `<div style="font-size:11px;color:#94A3B8;margin-top:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(a.ai_brief)}</div>`
       : '';
     return `
     <div class="feed-card${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}">
@@ -298,10 +579,10 @@ function renderFeed(articles) {
         <img src="${avatarUrl(name, a.source)}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:1px"/>
         <div style="flex:1;min-width:0">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:3px">
-            <span style="font-size:11px;font-weight:600;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
-            <span style="font-size:10px;color:#1E2A3B;flex-shrink:0">${time}</span>
+            <span style="font-size:11px;font-weight:600;color:#64748B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
+            <span style="font-size:10px;color:#94A3B8;flex-shrink:0">${time}</span>
           </div>
-          <div style="font-size:13px;font-weight:600;color:#E2E8F0;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:5px">${esc(a.title)}</div>
+          <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:5px">${esc(a.title)}</div>
           ${catTag(a.category)}
           ${brief}
         </div>
@@ -329,42 +610,76 @@ async function selectArticle(id) {
   }
 }
 
+function sanitizeHtml(html) {
+  // Remove dangerous tags and their content entirely
+  html = html.replace(/<(script|style|iframe|form|input|button|textarea|select|object|embed|applet|meta|link)[^>]*>[\s\S]*?<\/\1>/gi, '');
+  html = html.replace(/<(script|style|iframe|form|input|button|textarea|select|object|embed|applet|meta|link)[^>]*\/?>/gi, '');
+  // Strip event handlers and javascript: URLs from remaining tags
+  html = html.replace(/\s+on\w+="[^"]*"/gi, '');
+  html = html.replace(/\s+on\w+='[^']*'/gi, '');
+  html = html.replace(/href="javascript:[^"]*"/gi, 'href="#"');
+  // Wire links to open externally
+  html = html.replace(/<a\s/gi, '<a target="_blank" ');
+  return html;
+}
+
+function renderArticleBody(content, title) {
+  if (!content) {
+    return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+  }
+
+  const isHtml = /<[a-z][\s\S]*>/i.test(content);
+
+  if (isHtml) {
+    const safe = sanitizeHtml(content);
+    // Check it's not just the title wrapped in a tag
+    const textOnly = safe.replace(/<[^>]+>/g, '').trim();
+    if (!textOnly || textOnly === (title || '').trim()) {
+      return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+    }
+    return safe;
+  }
+
+  // Plain text — split into paragraphs
+  const decoded = decodeHtml(content);
+  const paras = decoded.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  if (!paras.length || paras.join('') === (title || '').trim()) {
+    return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+  }
+  return paras.map(p => `<p>${esc(p)}</p>`).join('');
+}
+
 function renderDetail(a) {
   const cat  = CAT[a.category] || { label: a.category||'Article', bg:'rgba(148,163,184,0.1)', text:'#94A3B8', border:'rgba(148,163,184,0.25)' };
   const name = sourceLabel(a);
   const time = relativeTime(a.published_at || a.created_at);
   const url  = a.source_url || '';
 
-  const stripped    = decodeHtml((a.content || '').replace(/<[^>]+>/g,' ')).trim();
-  const isMeaningful = stripped && stripped !== (a.title||'').trim();
-  const bodyHtml    = isMeaningful
-    ? stripped.split(/\n{2,}/).filter(p=>p.trim())
-        .map(p=>`<p style="margin-bottom:14px;color:#CBD5E1">${esc(p.trim())}</p>`).join('')
-    : `<p style="color:#334155;font-style:italic">Full content available at the original source.</p>`;
+  const rawContent = (a.content || '').trim();
+  const bodyHtml = renderArticleBody(rawContent, a.title);
 
   document.getElementById('detail-panel').innerHTML = `
   <div class="detail-content">
     <div style="margin-bottom:16px">${catTag(a.category)}</div>
-    <h1 style="font-size:22px;font-weight:800;color:#F1F5F9;line-height:1.3;letter-spacing:-0.3px;margin-bottom:18px">${esc(a.title)}</h1>
-    <div style="display:flex;align-items:center;gap:10px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #111827">
+    <h1 style="font-size:24px;font-weight:800;color:#0F172A;line-height:1.3;letter-spacing:-0.3px;margin-bottom:18px">${esc(a.title)}</h1>
+    <div style="display:flex;align-items:center;gap:10px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #F0F4F8">
       <img src="${avatarUrl(name, a.source)}" style="width:34px;height:34px;border-radius:50%;object-fit:cover"/>
       <div>
-        <div style="font-size:13px;font-weight:600;color:#E2E8F0">${esc(name)}</div>
-        <div style="font-size:11px;color:#475569">${time}</div>
+        <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(name)}</div>
+        <div style="font-size:11px;color:#64748B">${time}</div>
       </div>
     </div>
     ${a.ai_brief ? `
-    <div style="background:#111827;border:1px solid #1A2235;border-radius:10px;padding:14px 16px;margin-bottom:22px">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
-        <span class="msym" style="font-size:14px;color:#60A5FA">auto_awesome</span>
-        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#60A5FA">AI Brief</span>
+    <div class="brief-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <span class="msym" style="font-size:14px;color:#2563EB">auto_awesome</span>
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#2563EB">AI Summary</span>
       </div>
-      <p style="font-size:13px;line-height:1.65;color:#8899AA">${esc(a.ai_brief)}</p>
+      <p style="font-size:13px;line-height:1.7;color:#475569">${esc(a.ai_brief)}</p>
     </div>` : ''}
-    <div style="font-size:15px;line-height:1.75;margin-bottom:32px">${bodyHtml}</div>
+    <div class="article-body">${bodyHtml}</div>
     ${url ? `
-    <button onclick="openUrl('${esc(url)}')"
-      style="display:inline-flex;align-items:center;gap:8px;background:#2563EB;color:white;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:600">
+    <button class="read-btn" onclick="openUrl('${esc(url)}')">
       <span class="msym" style="font-size:16px">open_in_new</span>
       Read Original Article
     </button>` : ''}
@@ -401,7 +716,7 @@ function renderDigest(groups) {
     : groups;
 
   const total = filtered.reduce((n, g) => n + g.articles.length, 0);
-  
+
 
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No digest yet.');
@@ -416,10 +731,10 @@ function renderDigest(groups) {
       const selected = a.id === selectedId ? ' selected' : '';
       return `
       <div class="feed-card${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}" style="padding:10px 14px">
-        <div style="font-size:13px;font-weight:600;color:#E2E8F0;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px">${esc(a.title)}</div>
+        <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px">${esc(a.title)}</div>
         <div style="display:flex;justify-content:space-between">
-          <span style="font-size:11px;color:#475569">${esc(name)}</span>
-          <span style="font-size:10px;color:#1E2A3B">${time}</span>
+          <span style="font-size:11px;color:#64748B">${esc(name)}</span>
+          <span style="font-size:10px;color:#94A3B8">${time}</span>
         </div>
       </div>`;
     }).join('');
@@ -443,32 +758,32 @@ async function loadAuthorsView() {
     const data    = await res.json();
     const authors = data.authors || [];
 
-    
+
 
     list.innerHTML = `
-    <div style="padding:14px;border-bottom:1px solid #0D1117">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1E2A3B;margin-bottom:10px">Following</div>
+    <div style="padding:14px;border-bottom:1px solid #F0F4F8">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Following</div>
       ${authors.length === 0
-        ? `<p style="font-size:12px;color:#334155">Not following anyone yet.</p>`
+        ? `<p style="font-size:12px;color:#64748B">Not following anyone yet.</p>`
         : authors.map((a, i) => `
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i < authors.length-1 ? 'border-bottom:1px solid #0D1117' : ''}">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i < authors.length-1 ? 'border-bottom:1px solid #F0F4F8' : ''}">
           <img src="${avatarUrl(a.name,'substack')}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0"/>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:600;color:#E2E8F0">${esc(a.name)}</div>
-            <div style="font-size:11px;color:#334155">${esc(a.substack_slug)}.substack.com</div>
+            <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(a.name)}</div>
+            <div style="font-size:11px;color:#64748B">${esc(a.substack_slug)}.substack.com</div>
           </div>
           <button onclick="unfollowAuthor(${a.id})"
-            style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(37,99,235,0.1);color:#60A5FA;border:1px solid rgba(37,99,235,0.2)">
+            style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE">
             Unfollow
           </button>
         </div>`).join('')}
     </div>
     <div style="padding:14px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1E2A3B;margin-bottom:10px">Add Author</div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Add Author</div>
       <input id="new-name" type="text" placeholder="Name"
-        style="width:100%;background:#111827;border:1px solid #1A2235;border-radius:7px;padding:8px 10px;font-size:12px;color:#F1F5F9;display:block;margin-bottom:7px;outline:none"/>
+        style="width:100%;background:#FFFFFF;border:1px solid #E8EDF3;border-radius:7px;padding:8px 10px;font-size:12px;color:#0F172A;display:block;margin-bottom:7px;outline:none"/>
       <input id="new-slug" type="text" placeholder="Substack slug  (e.g. aaronparnas)"
-        style="width:100%;background:#111827;border:1px solid #1A2235;border-radius:7px;padding:8px 10px;font-size:12px;color:#F1F5F9;display:block;margin-bottom:10px;outline:none"/>
+        style="width:100%;background:#FFFFFF;border:1px solid #E8EDF3;border-radius:7px;padding:8px 10px;font-size:12px;color:#0F172A;display:block;margin-bottom:10px;outline:none"/>
       <button onclick="addAuthor()"
         style="width:100%;background:#2563EB;color:white;border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:600">
         Follow Author
@@ -536,38 +851,38 @@ async function loadAlertsView() {
   ];
 
   list.innerHTML = `
-  <div style="padding:14px;border-bottom:1px solid #0D1117">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1E2A3B;margin-bottom:10px">Authors</div>
+  <div style="padding:14px;border-bottom:1px solid #F0F4F8">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Authors</div>
     ${authors.length === 0
-      ? `<p style="font-size:12px;color:#334155">No authors followed yet.</p>`
+      ? `<p style="font-size:12px;color:#64748B">No authors followed yet.</p>`
       : authors.map((a,i) => `
-      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<authors.length-1?'border-bottom:1px solid #0D1117':''}">
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<authors.length-1?'border-bottom:1px solid #F0F4F8':''}">
         <img src="${avatarUrl(a.name,'substack')}" style="width:26px;height:26px;border-radius:50%;object-fit:cover"/>
-        <span style="flex:1;font-size:12px;font-weight:500;color:#CBD5E1">${esc(a.name)}</span>
+        <span style="flex:1;font-size:12px;font-weight:500;color:#0F172A">${esc(a.name)}</span>
         ${tog(`author_${a.id}`, true)}
       </div>`).join('')}
   </div>
-  <div style="padding:14px;border-bottom:1px solid #0D1117">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1E2A3B;margin-bottom:10px">Topics</div>
+  <div style="padding:14px;border-bottom:1px solid #F0F4F8">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Topics</div>
     ${cats.map((c,i) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<cats.length-1?'border-bottom:1px solid #0D1117':''}">
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<cats.length-1?'border-bottom:1px solid #F0F4F8':''}">
       <span class="msym" style="font-size:16px;color:${c.color}">${c.icon}</span>
-      <span style="flex:1;font-size:12px;font-weight:500;color:#CBD5E1">${c.label}</span>
+      <span style="flex:1;font-size:12px;font-weight:500;color:#0F172A">${c.label}</span>
       ${tog(c.key, c.defaultOn)}
     </div>`).join('')}
   </div>
   <div style="padding:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0">
       <div>
-        <div style="font-size:12px;font-weight:600;color:#CBD5E1;margin-bottom:2px">Daily Digest</div>
-        <div style="font-size:11px;color:#334155">Morning summary at 6 AM</div>
+        <div style="font-size:12px;font-weight:600;color:#0F172A;margin-bottom:2px">Daily Digest</div>
+        <div style="font-size:11px;color:#64748B">Morning summary at 6 AM</div>
       </div>
       ${tog('pref_daily_digest', true)}
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;margin-top:4px">
       <div>
-        <div style="font-size:12px;font-weight:600;color:#CBD5E1;margin-bottom:2px">Breaking Alerts</div>
-        <div style="font-size:11px;color:#334155">Major news regardless of filters</div>
+        <div style="font-size:12px;font-weight:600;color:#0F172A;margin-bottom:2px">Breaking Alerts</div>
+        <div style="font-size:11px;color:#64748B">Major news regardless of filters</div>
       </div>
       ${tog('pref_breaking', true)}
     </div>
@@ -578,20 +893,20 @@ async function loadAlertsView() {
 function showEmptyDetail() {
   document.getElementById('detail-panel').innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
-      <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.12">
+      <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.15">
         <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
         <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
         <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
         <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
         <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
       </svg>
-      <p style="font-size:13px;color:#1A2235;font-weight:500">Select an article to read</p>
+      <p style="font-size:13px;color:#94A3B8;font-weight:500">Select an article to read</p>
     </div>`;
 }
 
 function skeletons(n = 6) {
   return Array.from({ length: n }, () => `
-    <div style="padding:12px 14px;border-bottom:1px solid #0D1117">
+    <div style="padding:12px 14px;border-bottom:1px solid #F0F4F8;background:#FFFFFF">
       <div class="skeleton" style="height:11px;width:72px;margin-bottom:8px"></div>
       <div class="skeleton" style="height:13px;width:100%;margin-bottom:5px"></div>
       <div class="skeleton" style="height:13px;width:75%"></div>
@@ -599,12 +914,12 @@ function skeletons(n = 6) {
 }
 
 function emptyMsg(text) {
-  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px;color:#1E2A3B;font-size:12px">
-    <span class="msym" style="font-size:26px">inbox</span>${esc(text)}</div>`;
+  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px;color:#94A3B8;font-size:12px">
+    <span class="msym" style="font-size:26px;color:#94A3B8">inbox</span>${esc(text)}</div>`;
 }
 
 function errMsg(text) {
-  return `<div style="margin:12px;padding:11px 13px;border-radius:8px;background:rgba(127,29,29,0.25);border:1px solid rgba(239,68,68,0.2);font-size:12px;color:#FCA5A5">${esc(text)}</div>`;
+  return `<div style="margin:12px;padding:11px 13px;border-radius:8px;background:#FEF2F2;border:1px solid #FECACA;font-size:12px;color:#EF4444">${esc(text)}</div>`;
 }
 
 function detailSkeleton() {
@@ -620,6 +935,15 @@ function detailSkeleton() {
 }
 
 // ─── Init ────────────────────────────────────────────────────────
+// Intercept clicks on article body links → open in system browser
+document.getElementById('detail-panel').addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (a && a.href && !a.href.startsWith('#')) {
+    e.preventDefault();
+    openUrl(a.href);
+  }
+});
+
 loadFeed();
 </script>
 </body>

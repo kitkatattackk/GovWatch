@@ -14,6 +14,7 @@ const { pollFederalRegister } = require('./pollers/federal_register');
 const { pollCourtListener }   = require('./pollers/courtlistener');
 const { pollUSASpending }      = require('./pollers/usaspending');
 const { generateDailyDigest }  = require('./services/digest_generator');
+const { router: settingsRouter, loadSettings } = require('./routes/settings');
 
 const app = express();
 app.use(cors());
@@ -24,6 +25,7 @@ app.use('/api/feed',     require('./routes/feed'));
 app.use('/api/articles', require('./routes/feed'));
 app.use('/api/digest',   require('./routes/digest'));
 app.use('/api/authors',  require('./routes/authors'));
+app.use('/api/settings', settingsRouter);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -32,14 +34,15 @@ app.get('/health', (req, res) => {
 
 // Manual trigger: run all pollers immediately (useful during dev)
 app.post('/api/poll', async (req, res) => {
-  console.log('[Manual] Triggering all pollers...');
+  const { sources } = loadSettings();
+  console.log('[Manual] Triggering pollers...');
   res.json({ message: 'Polling started — check server logs.' });
-  await pollSubstack();
-  await pollCongress();
-  await pollFederalRegister();
-  await pollCourtListener();
-  await pollUSASpending();
-  console.log('[Manual] All pollers complete.');
+  if (sources.substack)        await pollSubstack();
+  if (sources.congress)        await pollCongress();
+  if (sources.federalregister) await pollFederalRegister();
+  if (sources.courtlistener)   await pollCourtListener();
+  if (sources.usaspending)     await pollUSASpending();
+  console.log('[Manual] Pollers complete.');
   await generateDailyDigest();
   console.log('[Manual] Digest generated.');
 });

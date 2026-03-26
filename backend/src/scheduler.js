@@ -5,10 +5,13 @@ const { pollFederalRegister }  = require('./pollers/federal_register');
 const { pollCourtListener }    = require('./pollers/courtlistener');
 const { pollUSASpending }      = require('./pollers/usaspending');
 const { generateDailyDigest }  = require('./services/digest_generator');
+const { loadSettings }         = require('./routes/settings');
 
 function startScheduler() {
   // Substack: every 4 hours
   cron.schedule('0 */4 * * *', async () => {
+    const { sources } = loadSettings();
+    if (!sources.substack) return console.log('[Scheduler] Substack disabled, skipping.');
     console.log('[Scheduler] → Substack poll starting...');
     await pollSubstack();
     console.log('[Scheduler] ✓ Substack poll done.');
@@ -16,11 +19,12 @@ function startScheduler() {
 
   // Government APIs: every 6 hours
   cron.schedule('0 */6 * * *', async () => {
+    const { sources } = loadSettings();
     console.log('[Scheduler] → Government APIs poll starting...');
-    await pollCongress();
-    await pollFederalRegister();
-    await pollCourtListener();
-    await pollUSASpending();
+    if (sources.congress)        await pollCongress();
+    if (sources.federalregister) await pollFederalRegister();
+    if (sources.courtlistener)   await pollCourtListener();
+    if (sources.usaspending)     await pollUSASpending();
     console.log('[Scheduler] ✓ Government APIs poll done.');
   });
 

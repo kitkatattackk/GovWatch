@@ -7,6 +7,7 @@ const VALID_CATEGORIES = [
   'executive_orders',
   'court_rulings',
   'government_spending',
+  'opinion',
 ];
 
 /**

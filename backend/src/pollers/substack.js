@@ -42,14 +42,14 @@ async function pollSubstack() {
 
         const rawContent = item.contentEncoded || item.content || item.summary || '';
 
-        // Generate brief + auto-classify category
-        const { brief, category } = await generateBriefAndCategory(item.title, rawContent);
+        // Generate brief — Substack posts are always opinion category
+        const { brief } = await generateBriefAndCategory(item.title, rawContent);
 
         await pool.query(
           `INSERT INTO articles
              (author_id, external_id, title, content, ai_brief, category, source, source_url, published_at)
-           VALUES ($1, $2, $3, $4, $5, $6, 'substack', $7, $8)`,
-          [author.id, url, item.title, rawContent, brief, category, url, publishedAt]
+           VALUES ($1, $2, $3, $4, $5, 'opinion', 'substack', $6, $7)`,
+          [author.id, url, item.title, rawContent, brief, url, publishedAt]
         );
 
         console.log(`[Substack] ✓ Ingested: "${item.title}"`);

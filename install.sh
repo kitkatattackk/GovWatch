@@ -11,7 +11,9 @@ echo "Removing quarantine..."
 xattr -cr "$DMG_PATH"
 
 echo "Mounting DMG..."
-MOUNT=$(hdiutil attach "$DMG_PATH" -nobrowse | grep -o '/Volumes/[^\t]*' | tail -1)
+MOUNT="/tmp/govwatch_mount"
+mkdir -p "$MOUNT"
+hdiutil attach "$DMG_PATH" -nobrowse -quiet -mountpoint "$MOUNT"
 
 echo "Installing to /Applications..."
 cp -R "$MOUNT/GovWatch.app" /Applications/

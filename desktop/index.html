@@ -52,6 +52,8 @@
   .filter-chip:hover { color: #0F172A; border-color: #CBD5E1; }
   .filter-chip.active { color: #1D4ED8; border-color: #BFDBFE; background: #EFF6FF; font-weight: 600; }
   .filter-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .chip-count { font-size: 9px; font-weight: 600; background: #E2E8F0; color: #94A3B8; border-radius: 8px; padding: 1px 5px; margin-left: 1px; }
+  .filter-chip.active .chip-count { background: #DBEAFE; color: #3B82F6; }
   .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #0F172A; font-family: 'Inter', sans-serif; -webkit-app-region: no-drag; }
   .feed-list-wrap { flex: 1; position: relative; overflow: hidden; }
   .feed-list-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 72px; background: linear-gradient(to bottom, transparent, rgba(236,241,248,0.9)); pointer-events: none; z-index: 2; }
@@ -99,6 +101,10 @@
   .read-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: white; border: none; border-radius: 10px; padding: 11px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
   .read-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
   .read-btn:active { transform: translateY(0); }
+
+  /* ── Toast ── */
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: #0F172A; color: #F8FAFC; font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 9999; white-space: nowrap; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── Toggles ── */
   .toggle { position: relative; width: 36px; height: 20px; border-radius: 10px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; background: #E2E8F0; -webkit-app-region: no-drag; }
@@ -273,26 +279,26 @@
           <input id="search-input" type="text" placeholder="Search..." oninput="onSearch(this.value)"/>
         </div>
         <div class="feed-filters" id="feed-filters">
-          <div class="filter-chip active" onclick="setFilter(this,'','')">
-            <div class="filter-dot" style="background:#94A3B8"></div> All
+          <div class="filter-chip active" data-count-key="all" onclick="setFilter(this,'','')">
+            <div class="filter-dot" style="background:#94A3B8"></div> All<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'','substack')">
-            <div class="filter-dot" style="background:#FDA4AF"></div> Substackers
+          <div class="filter-chip" data-count-key="substack" onclick="setFilter(this,'','substack')">
+            <div class="filter-dot" style="background:#FDA4AF"></div> Substackers<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'bills_votes','')">
-            <div class="filter-dot" style="background:#60A5FA"></div> Bills &amp; Votes
+          <div class="filter-chip" data-count-key="bills_votes" onclick="setFilter(this,'bills_votes','')">
+            <div class="filter-dot" style="background:#60A5FA"></div> Bills &amp; Votes<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'executive_orders','')">
-            <div class="filter-dot" style="background:#FCD34D"></div> Exec Orders
+          <div class="filter-chip" data-count-key="executive_orders" onclick="setFilter(this,'executive_orders','')">
+            <div class="filter-dot" style="background:#FCD34D"></div> Exec Orders<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'court_rulings','')">
-            <div class="filter-dot" style="background:#C4B5FD"></div> Court Rulings
+          <div class="filter-chip" data-count-key="court_rulings" onclick="setFilter(this,'court_rulings','')">
+            <div class="filter-dot" style="background:#C4B5FD"></div> Court Rulings<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'government_spending','')">
-            <div class="filter-dot" style="background:#6EE7B7"></div> Spending
+          <div class="filter-chip" data-count-key="government_spending" onclick="setFilter(this,'government_spending','')">
+            <div class="filter-dot" style="background:#6EE7B7"></div> Spending<span class="chip-count"></span>
           </div>
-          <div class="filter-chip" onclick="setFilter(this,'','bookmarks')">
-            <span class="msym" style="font-size:11px;color:#FBBF24">bookmark</span> Bookmarks
+          <div class="filter-chip" data-count-key="bookmarks" onclick="setFilter(this,'','bookmarks')">
+            <span class="msym" style="font-size:11px;color:#FBBF24">bookmark</span> Bookmarks<span class="chip-count"></span>
           </div>
         </div>
       </div>
@@ -326,6 +332,27 @@ const BOOKMARKS_KEY = 'govwatch_bookmarks';
 
 function loadBookmarks() { try { return new Set(JSON.parse(localStorage.getItem(BOOKMARKS_KEY)) || []); } catch { return new Set(); } }
 function saveBookmarks(set) { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify([...set])); }
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+async function shareArticle(title, url) {
+  if (navigator.share) {
+    try { await navigator.share({ title, url }); return; } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('Link copied to clipboard');
+  } catch(e) {
+    showToast('Could not copy link');
+  }
+}
+
 function toggleBookmark(id, e) {
   e.stopPropagation();
   const bm = loadBookmarks();
@@ -611,6 +638,31 @@ function setFilter(el, cat, source) {
   loadFeed();
 }
 
+async function updateChipCounts() {
+  try {
+    const res = await fetch(`${API}/api/feed?page_size=200`);
+    const data = await res.json();
+    const articles = data.articles || [];
+    const bm = loadBookmarks();
+    const counts = {
+      all:                articles.length,
+      substack:           articles.filter(a => a.source === 'substack').length,
+      bills_votes:        articles.filter(a => a.category === 'bills_votes').length,
+      executive_orders:   articles.filter(a => a.category === 'executive_orders').length,
+      court_rulings:      articles.filter(a => a.category === 'court_rulings').length,
+      government_spending:articles.filter(a => a.category === 'government_spending').length,
+      bookmarks:          bm.size,
+    };
+    document.querySelectorAll('.filter-chip[data-count-key]').forEach(chip => {
+      const key = chip.dataset.countKey;
+      const el  = chip.querySelector('.chip-count');
+      if (el && counts[key] !== undefined) {
+        el.textContent = counts[key] > 99 ? '99+' : counts[key] || '';
+      }
+    });
+  } catch(e) { /* silent */ }
+}
+
 // ─── Search ──────────────────────────────────────────────────────
 function onSearch(q) {
   searchQuery = q.toLowerCase().trim();
@@ -781,11 +833,17 @@ function renderDetail(a) {
   <div class="detail-content">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       ${catTag(a.category)}
-      <span class="msym" data-bm="${a.id}" onclick="toggleBookmark(${a.id}, event)"
-        style="font-size:22px;cursor:pointer;color:${isBookmarked ? '#2563EB' : '#CBD5E1'};transition:color 0.15s,transform 0.2s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
-        onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform=''"
-        title="${isBookmarked ? 'Remove bookmark' : 'Bookmark'}"
-      >${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${url ? `<span class="msym" onclick="shareArticle('${esc(a.title.replace(/'/g,"\\\'"))}','${esc(url)}')"
+          style="font-size:22px;cursor:pointer;color:#CBD5E1;transition:color 0.15s,transform 0.2s"
+          onmouseover="this.style.color='#64748B';this.style.transform='scale(1.15)'" onmouseout="this.style.color='#CBD5E1';this.style.transform=''"
+          title="Share">ios_share</span>` : ''}
+        <span class="msym" data-bm="${a.id}" onclick="toggleBookmark(${a.id}, event)"
+          style="font-size:22px;cursor:pointer;color:${isBookmarked ? '#2563EB' : '#CBD5E1'};transition:color 0.15s,transform 0.2s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
+          onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform=''"
+          title="${isBookmarked ? 'Remove bookmark' : 'Bookmark'}"
+        >${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
+      </div>
     </div>
     <h1 style="font-size:24px;font-weight:800;color:#0F172A;line-height:1.3;letter-spacing:-0.3px;margin-bottom:18px">${esc(a.title)}</h1>
     <div style="display:flex;align-items:center;gap:10px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #F0F4F8">
@@ -1071,6 +1129,7 @@ document.getElementById('detail-panel').addEventListener('click', e => {
 });
 
 loadFeed();
+updateChipCounts();
 
 // ─── 3D Card Tilt ────────────────────────────────────────────────
 const feedList = document.getElementById('feed-list');
@@ -1122,5 +1181,6 @@ document.querySelector('.pill-nav').addEventListener('mouseup', e => {
   if (link) { link.style.transform = ''; }
 });
 </script>
+<div id="toast"></div>
 </body>
 </html>

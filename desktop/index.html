@@ -140,6 +140,8 @@
   @keyframes pulseRing { 0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.25); } 50% { box-shadow: 0 0 0 5px rgba(37,99,235,0); } }
   @keyframes gradientShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
   @keyframes cardSlideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes detailOpen3D { from { opacity:0; transform:perspective(900px) rotateY(-12deg) translateX(30px); } to { opacity:1; transform:perspective(900px) rotateY(0deg) translateX(0); } }
+  @keyframes sidebarPop3D { from { opacity:0; transform:perspective(400px) rotateX(20deg) translateY(-8px); } to { opacity:1; transform:perspective(400px) rotateX(0deg) translateY(0); } }
 
   /* ── App startup ── */
   .app { animation: fadeIn 0.35s ease-out; }
@@ -156,25 +158,24 @@
   .pill-link.active { animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 
   /* ── Sidebar items ── */
-  .sidebar-item { transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1); }
-  .sidebar-item:hover { transform: scale(1.1); }
+  .sidebar-item { transition: background 0.18s, color 0.18s, box-shadow 0.18s; transform-style: preserve-3d; }
+  .sidebar-item:hover { transform: perspective(200px) translateZ(6px) scale(1.08); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
   .sidebar-item.active { animation: pulseRing 2.5s ease-in-out infinite; }
-  .sidebar-item .msym { transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1); }
-  .sidebar-item:hover .msym { transform: scale(1.15); }
+  .sidebar-item .msym { transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+  .sidebar-item:hover .msym { transform: scale(1.18) translateZ(2px); }
 
   /* ── Feed cards ── */
-  .feed-card { transition: background 0.15s, transform 0.15s, box-shadow 0.15s; }
-  .feed-card:hover { transform: translateX(2px); box-shadow: inset 3px 0 0 rgba(37,99,235,0.2); }
-  .feed-card.selected { transform: translateX(2px); }
+  .feed-card { transition: background 0.15s, box-shadow 0.2s; transform-style: preserve-3d; will-change: transform; }
+  .feed-card.selected { background: #F0F6FF; }
   .feed-card.animate-in { animation: cardSlideIn 0.22s ease-out both; }
 
   /* ── Filter chips ── */
   .filter-chip { transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.18s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1); }
-  .filter-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .filter-chip:hover { transform: translateY(-1px) perspective(200px) translateZ(3px); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
   .filter-chip.active { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(37,99,235,0.15); }
 
   /* ── Detail panel ── */
-  .detail-content { animation: slideInRight 0.28s cubic-bezier(0.22,1,0.36,1); }
+  .detail-content { animation: detailOpen3D 0.38s cubic-bezier(0.22,1,0.36,1); }
 
   /* ── Cat tags ── */
   .cat-tag { transition: transform 0.15s, box-shadow 0.15s; }
@@ -1022,6 +1023,56 @@ document.getElementById('detail-panel').addEventListener('click', e => {
 });
 
 loadFeed();
+
+// ─── 3D Card Tilt ────────────────────────────────────────────────
+const feedList = document.getElementById('feed-list');
+
+feedList.addEventListener('mousemove', e => {
+  const card = e.target.closest('.feed-card');
+  if (!card || card.classList.contains('selected')) return;
+  const rect = card.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width  - 0.5;  // -0.5 to 0.5
+  const y = (e.clientY - rect.top)  / rect.height - 0.5;
+  const rotY =  x * 8;   // max ±4deg
+  const rotX = -y * 5;   // max ±2.5deg
+  const glowX = 50 + x * 60;
+  const glowY = 50 + y * 60;
+  card.style.transform = `perspective(700px) rotateY(${rotY}deg) rotateX(${rotX}deg) translateZ(6px)`;
+  card.style.boxShadow = `${-x*8}px ${-y*6}px 20px rgba(37,99,235,0.1), inset 0 0 0 1px rgba(255,255,255,0.5)`;
+  card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(219,234,254,0.5) 0%, #FFFFFF 60%)`;
+});
+
+feedList.addEventListener('mouseleave', resetAllCards);
+
+feedList.addEventListener('mouseover', e => {
+  // Reset other cards when hovering a new one
+  const card = e.target.closest('.feed-card');
+  document.querySelectorAll('.feed-card').forEach(c => {
+    if (c !== card) resetCard(c);
+  });
+});
+
+function resetCard(card) {
+  card.style.transform = '';
+  card.style.boxShadow = '';
+  card.style.background = '';
+  card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease';
+  setTimeout(() => { card.style.transition = ''; }, 400);
+}
+
+function resetAllCards() {
+  document.querySelectorAll('.feed-card').forEach(resetCard);
+}
+
+// ─── 3D Pill nav press ───────────────────────────────────────────
+document.querySelector('.pill-nav').addEventListener('mousedown', e => {
+  const link = e.target.closest('.pill-link');
+  if (link) link.style.transform = 'perspective(400px) translateZ(-3px) scale(0.97)';
+});
+document.querySelector('.pill-nav').addEventListener('mouseup', e => {
+  const link = e.target.closest('.pill-link');
+  if (link) { link.style.transform = ''; }
+});
 </script>
 </body>
 </html>

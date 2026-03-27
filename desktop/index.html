@@ -48,7 +48,7 @@
   /* ── Filter chips ── */
   .feed-filters { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 6px; padding-top: 2px; padding-right: 8px; }
   .feed-filters::-webkit-scrollbar { display: none; }
-  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #64748B; border: 1px solid #E8EDF3; white-space: nowrap; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
+  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #64748B; border: 1px solid #E8EDF3; white-space: nowrap; flex-shrink: 0; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
   .filter-chip:hover { color: #0F172A; border-color: #CBD5E1; }
   .filter-chip.active { color: #1D4ED8; border-color: #BFDBFE; background: #EFF6FF; font-weight: 600; }
   .filter-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }

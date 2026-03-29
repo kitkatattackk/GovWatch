@@ -32,19 +32,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Manual trigger: run all pollers immediately (useful during dev)
-app.post('/api/poll', async (req, res) => {
-  const { sources } = loadSettings();
-  console.log('[Manual] Triggering pollers...');
-  res.json({ message: 'Polling started — check server logs.' });
-  if (sources.substack)        await pollSubstack();
-  if (sources.congress)        await pollCongress();
-  if (sources.federalregister) await pollFederalRegister();
-  if (sources.courtlistener)   await pollCourtListener();
-  if (sources.usaspending)     await pollUSASpending();
-  console.log('[Manual] Pollers complete.');
-  await generateDailyDigest();
-  console.log('[Manual] Digest generated.');
+// Manual trigger: DISABLED — polling paused, re-enable before going live
+app.post('/api/poll', (req, res) => {
+  res.json({ message: 'Polling is currently disabled. Serving existing data only.' });
 });
 
 const PORT = process.env.PORT || 3000;

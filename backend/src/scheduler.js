@@ -8,34 +8,8 @@ const { generateDailyDigest }  = require('./services/digest_generator');
 const { loadSettings }         = require('./routes/settings');
 
 function startScheduler() {
-  // Substack: every 4 hours
-  cron.schedule('0 */4 * * *', async () => {
-    const { sources } = loadSettings();
-    if (!sources.substack) return console.log('[Scheduler] Substack disabled, skipping.');
-    console.log('[Scheduler] → Substack poll starting...');
-    await pollSubstack();
-    console.log('[Scheduler] ✓ Substack poll done.');
-  });
-
-  // Government APIs: every 6 hours
-  cron.schedule('0 */6 * * *', async () => {
-    const { sources } = loadSettings();
-    console.log('[Scheduler] → Government APIs poll starting...');
-    if (sources.congress)        await pollCongress();
-    if (sources.federalregister) await pollFederalRegister();
-    if (sources.courtlistener)   await pollCourtListener();
-    if (sources.usaspending)     await pollUSASpending();
-    console.log('[Scheduler] ✓ Government APIs poll done.');
-  });
-
-  // Daily Digest: every morning at 6 AM
-  cron.schedule('0 6 * * *', async () => {
-    console.log('[Scheduler] → Daily digest generation starting...');
-    await generateDailyDigest();
-    console.log('[Scheduler] ✓ Daily digest done.');
-  });
-
-  console.log('[Scheduler] Started — Substack: 4hr | Gov APIs: 6hr | Digest: 6AM daily');
+  // POLLING DISABLED — using existing data only (re-enable before going live)
+  console.log('[Scheduler] Disabled — all polling paused, serving existing data only.');
 }
 
 module.exports = { startScheduler };

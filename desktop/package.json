@@ -1,6 +1,6 @@
 {
   "name": "govwatch-desktop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GovWatch Desktop — follow government actions and political writers in one place",
   "main": "main.js",
   "scripts": {

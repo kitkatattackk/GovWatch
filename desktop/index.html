@@ -3,237 +3,660 @@
 <head>
 <meta charset="utf-8"/>
 <title>GovWatch</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=swap" rel="stylesheet"/>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-  html, body { height: 100%; background: linear-gradient(145deg, #C2CEDF 0%, #A8B8CE 100%); color: #0F172A; font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
+:root {
+  --bg:      #09090A;
+  --surf:    #0F0F0C;
+  --elev:    #141412;
+  --bdr:     #1E1E1A;
+  --bdr2:    #272722;
+  --txt:     #DDD8CF;
+  --txt2:    #78736A;
+  --txt3:    #3E3C37;
+  --acc:     #C1440E;
+  --acc-bg:  rgba(193,68,14,0.07);
+  --acc-bdr: rgba(193,68,14,0.18);
+  --mono:    'IBM Plex Mono', 'Courier New', monospace;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --cat-blue:   #4B8EC8;
+  --cat-amber:  #C8922B;
+  --cat-purple: #8B6EC8;
+  --cat-green:  #3A9A6E;
+  --cat-rose:   #C86B8B;
+}
 
-  .app { display: flex; flex-direction: column; height: 100vh; position: relative; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
 
-  /* ── Top Bar ── */
-  .topbar { height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 20px; -webkit-app-region: drag; background: rgba(255,255,255,0.35); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.4); }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--mono);
+  overflow: hidden;
+  user-select: none;
+}
 
-  /* ── Pill Nav ── */
-  .pill-nav { display: flex; align-items: center; gap: 2px; background: #FFFFFF; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid #E8EDF3; border-radius: 100px; padding: 4px 5px; -webkit-app-region: no-drag; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-  .pill-logo { display: flex; align-items: center; gap: 7px; padding: 5px 14px 5px 10px; cursor: default; }
-  .pill-logo span { font-size: 14px; font-weight: 700; color: #0F172A; letter-spacing: -0.3px; }
-  .pill-sep { width: 1px; height: 18px; background: #E8EDF3; margin: 0 3px; flex-shrink: 0; }
-  .pill-link { padding: 6px 15px; border-radius: 100px; font-size: 13px; font-weight: 500; color: #64748B; cursor: pointer; transition: all 0.15s; white-space: nowrap; -webkit-app-region: no-drag; }
-  .pill-link:hover { color: #0F172A; background: rgba(0,0,0,0.04); }
-  .pill-link.active { color: #FFFFFF; background: #2563EB; font-weight: 600; box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.032;
+  pointer-events: none;
+  z-index: 99997;
+}
 
-  /* ── Content area ── */
-  .content { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 1; }
+/* Signal stripe at top */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--acc) 0%, rgba(193,68,14,0.3) 60%, transparent 100%);
+  z-index: 99998;
+  pointer-events: none;
+}
 
-  /* ── Sidebar ── */
-  .sidebar { width: 56px; flex-shrink: 0; background: rgba(255,255,255,0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-right: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; align-items: center; -webkit-app-region: drag; position: relative; z-index: 5; }
-  .sidebar-logo { width: 100%; height: 85px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.4); flex-shrink: 0; }
-  .sidebar-nav { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0; flex: 1; width: 100%; }
-  .sidebar-bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 14px; width: 100%; }
-  .sidebar-item { width: calc(100% - 8px); height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; -webkit-app-region: no-drag; position: relative; color: #5A6A80; }
-  .sidebar-item:hover { color: #2D3E52; background: rgba(0,0,0,0.07); }
-  .sidebar-item.active { color: #2563EB; background: rgba(37,99,235,0.12); }
-  .sidebar-item .msym { font-size: 22px; }
+.app          { display: flex; flex-direction: column; height: 100vh; }
+.topbar       { animation: topbarDrop   0.5s cubic-bezier(0.22,1,0.36,1) 0.00s both; }
+.sidebar      { animation: sidebarSlide 0.5s cubic-bezier(0.22,1,0.36,1) 0.06s both; }
+.feed-panel   { animation: panelRise    0.55s cubic-bezier(0.22,1,0.36,1) 0.12s both; }
+.detail-wrap  { animation: panelRise    0.55s cubic-bezier(0.22,1,0.36,1) 0.20s both; }
 
-  /* Tooltip */
-  .sidebar-item::after { content: attr(data-tip); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: #0F172A; color: white; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 20px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; font-family: 'Inter', sans-serif; }
-  .sidebar-item:hover::after { opacity: 1; }
+/* ── Top Bar ── */
+.topbar {
+  height: 46px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 14px;
+  -webkit-app-region: drag;
+  background: var(--surf);
+  border-bottom: 1px solid var(--bdr);
+  gap: 0;
+  position: relative;
+  z-index: 10;
+}
 
-  /* ── Feed Panel ── */
-  .feed-panel { width: 360px; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,0.4); display: flex; flex-direction: column; background: rgba(246,248,251,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-  .feed-header { padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; border-bottom: 1px solid #E8EDF3; background: #FFFFFF; flex-shrink: 0; }
-  .feed-search { display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid #E8EDF3; border-radius: 10px; padding: 7px 10px; transition: border-color 0.15s, box-shadow 0.15s; }
-  .feed-search:focus-within { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-right: 16px;
+  border-right: 1px solid var(--bdr);
+  height: 100%;
+  -webkit-app-region: no-drag;
+  flex-shrink: 0;
+}
 
-  /* ── Filter chips ── */
-  .feed-filters { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 6px; padding-top: 2px; padding-right: 8px; }
-  .feed-filters::-webkit-scrollbar { display: none; }
-  .filter-chip { display: flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: 500; color: #64748B; border: 1px solid #E8EDF3; white-space: nowrap; flex-shrink: 0; transition: all 0.12s; background: transparent; -webkit-app-region: no-drag; }
-  .filter-chip:hover { color: #0F172A; border-color: #CBD5E1; }
-  .filter-chip.active { color: #1D4ED8; border-color: #BFDBFE; background: #EFF6FF; font-weight: 600; }
-  .filter-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-  .chip-count { font-size: 9px; font-weight: 600; background: #E2E8F0; color: #94A3B8; border-radius: 8px; padding: 1px 5px; margin-left: 1px; }
-  .filter-chip.active .chip-count { background: #DBEAFE; color: #3B82F6; }
-  .feed-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #0F172A; font-family: 'Inter', sans-serif; -webkit-app-region: no-drag; }
-  .feed-list-wrap { flex: 1; position: relative; overflow: hidden; }
-  .feed-list-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 72px; background: linear-gradient(to bottom, transparent, rgba(236,241,248,0.9)); pointer-events: none; z-index: 2; }
-  .feed-list { height: 100%; overflow-y: auto; }
-  .feed-list::-webkit-scrollbar { display: none; }
+.topbar-wordmark {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--txt2);
+  text-transform: uppercase;
+}
 
-  .feed-card { padding: 12px 14px; border-bottom: 1px solid #F0F4F8; cursor: pointer; transition: background 0.12s; -webkit-app-region: no-drag; position: relative; background: #FFFFFF; }
-  .feed-card:hover { background: #FAFBFD; }
-  .feed-card.selected { background: #F0F6FF; padding-left: 12px; }
-  .feed-card.selected::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #3B82F6, #1D4ED8); border-radius: 0 2px 2px 0; }
+/* ── Pill Nav repurposed as inline tab nav ── */
+.pill-nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  -webkit-app-region: no-drag;
+  flex-shrink: 0;
+}
 
-  .digest-section-header { padding: 8px 14px 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: rgba(246,248,251,0.95); backdrop-filter: blur(8px); z-index: 1; border-bottom: 1px solid #E8EDF3; }
+.pill-link {
+  padding: 0 15px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  cursor: pointer;
+  transition: color 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  -webkit-app-region: no-drag;
+  position: relative;
+}
+.pill-link:hover { color: var(--txt2); }
+.pill-link.active { color: var(--txt); border-bottom-color: var(--acc); }
 
-  /* ── Detail Panel ── */
-  .detail-panel { flex: 1; overflow-y: auto; background: #FFFFFF; }
-  .detail-panel::-webkit-scrollbar { width: 5px; }
-  .detail-panel::-webkit-scrollbar-track { background: transparent; }
-  .detail-panel::-webkit-scrollbar-thumb { background: #E8EDF3; border-radius: 3px; }
-  .detail-content { max-width: 740px; margin: 0 auto; padding: 44px 56px; }
+.topbar-date {
+  margin-left: auto;
+  margin-right: 16px;
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--txt3);
+  -webkit-app-region: no-drag;
+  flex-shrink: 0;
+}
 
-  /* ── Tags ── */
-  .cat-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+/* ── Content area ── */
+.content { display: flex; flex: 1; overflow: hidden; }
 
-  /* ── AI Brief card ── */
-  .brief-card { background: #F8FAFF; border: 1px solid #DBEAFE; border-radius: 12px; padding: 16px 18px; margin-bottom: 24px; }
+/* ── Sidebar ── */
+.sidebar {
+  width: 48px;
+  flex-shrink: 0;
+  background: var(--surf);
+  border-right: 1px solid var(--bdr);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-app-region: drag;
+}
 
-  /* ── Article body HTML ── */
-  .article-body { font-size: 16px; line-height: 1.8; color: #1E293B; margin-bottom: 36px; }
-  .article-body p { margin-bottom: 1.2em; }
-  .article-body h1, .article-body h2 { font-size: 1.2em; font-weight: 700; color: #0F172A; margin: 1.6em 0 0.5em; line-height: 1.3; }
-  .article-body h3, .article-body h4 { font-size: 1em; font-weight: 700; color: #0F172A; margin: 1.4em 0 0.4em; }
-  .article-body strong, .article-body b { font-weight: 700; color: #0F172A; }
-  .article-body em, .article-body i { font-style: italic; }
-  .article-body a { color: #2563EB; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-  .article-body a:hover { color: #1D4ED8; }
-  .article-body blockquote { border-left: 3px solid #BFDBFE; padding: 4px 0 4px 16px; margin: 1.2em 0; color: #475569; font-style: italic; }
-  .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.2em; }
-  .article-body li { margin-bottom: 0.4em; }
-  .article-body img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
-  .article-body hr { border: none; border-top: 1px solid #E8EDF3; margin: 1.6em 0; }
-  .article-body figure { margin: 1.2em 0; }
-  .article-body figcaption { font-size: 12px; color: #94A3B8; text-align: center; margin-top: 6px; }
+.sidebar-logo { display: none; }
+.sidebar-nav { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0; flex: 1; width: 100%; }
+.sidebar-bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 14px; width: 100%; }
 
-  /* ── Read button ── */
-  .read-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: white; border: none; border-radius: 10px; padding: 11px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
-  .read-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
-  .read-btn:active { transform: translateY(0); }
+.sidebar-item {
+  width: calc(100% - 8px);
+  height: 38px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-left-color 0.15s;
+  -webkit-app-region: no-drag;
+  position: relative;
+  color: var(--txt3);
+  border-left: 2px solid transparent;
+}
+.sidebar-item { transition: background 0.15s, color 0.15s, border-left-color 0.15s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-style: preserve-3d; }
+.sidebar-item:hover { color: var(--txt2); background: rgba(255,255,255,0.025); transform: perspective(200px) translateZ(8px) scale(1.06); }
+.sidebar-item.active { color: var(--txt); border-left-color: var(--acc); background: var(--acc-bg); }
 
-  /* ── Toast ── */
-  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: #0F172A; color: #F8FAFC; font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 9999; white-space: nowrap; }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.sidebar-item::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--elev);
+  color: var(--txt);
+  font-size: 9px;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--bdr2);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.sidebar-item:hover::after { opacity: 1; }
 
-  /* ── Toggles ── */
-  .toggle { position: relative; width: 36px; height: 20px; border-radius: 10px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; background: #E2E8F0; -webkit-app-region: no-drag; }
-  .toggle.on { background: #2563EB; }
-  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #FFFFFF; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-  .toggle.on::after { transform: translateX(16px); }
+/* ── Feed Panel ── */
+.feed-panel {
+  width: 300px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--bdr);
+  display: flex;
+  flex-direction: column;
+  background: var(--surf);
+}
 
-  /* ── Settings panel ── */
-  .settings-wrap { max-width: 600px; margin: 0 auto; padding: 36px 48px; animation: fadeUp 0.2s ease-out; }
-  .settings-section { background: #FFFFFF; border-radius: 14px; border: 1px solid #E8EDF3; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-  .settings-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94A3B8; padding: 14px 18px 10px; border-bottom: 1px solid #F0F4F8; }
-  .settings-row { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-bottom: 1px solid #F0F4F8; }
-  .settings-row:last-child { border-bottom: none; }
-  .settings-row-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .settings-row-label { flex: 1; }
-  .settings-row-label strong { display: block; font-size: 13px; font-weight: 600; color: #0F172A; margin-bottom: 1px; }
-  .settings-row-label span { font-size: 11px; color: #94A3B8; }
-  .settings-status { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .settings-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-  .btn-primary { background: #2563EB; color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
-  .btn-primary:hover { background: #1D4ED8; }
-  .btn-primary:disabled { background: #93C5FD; cursor: not-allowed; box-shadow: none; }
-  .btn-ghost { background: #F1F5F9; color: #475569; }
-  .btn-ghost:hover { background: #E2E8F0; }
-  .settings-select { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 7px; padding: 6px 10px; font-size: 12px; color: #0F172A; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+.feed-header {
+  padding: 10px 12px 0;
+  border-bottom: 1px solid var(--bdr);
+  background: var(--surf);
+  flex-shrink: 0;
+}
 
-  /* ── Skeleton ── */
-  @keyframes pulse { 0%,100%{background:#E8EDF3} 50%{background:#F1F5F9} }
-  .skeleton { background: #E8EDF3; border-radius: 5px; animation: pulse 1.8s ease-in-out infinite; }
+.feed-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg);
+  border: 1px solid var(--bdr);
+  border-radius: 2px;
+  padding: 6px 9px;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.feed-search:focus-within { border-color: var(--bdr2); }
+.feed-search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--txt);
+  -webkit-app-region: no-drag;
+}
+.feed-search input::placeholder { color: var(--txt3); }
 
-  /* ── Core keyframes ── */
-  @keyframes fadeUp   { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-  @keyframes slideInRight { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
-  @keyframes spin     { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes shimmer  { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
-  @keyframes popIn    { 0% { opacity:0; transform:scale(0.88); } 60% { transform:scale(1.04); } 100% { opacity:1; transform:scale(1); } }
-  @keyframes pulseRing { 0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.25); } 50% { box-shadow: 0 0 0 5px rgba(37,99,235,0); } }
-  @keyframes gradientShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-  @keyframes cardSlideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
-  @keyframes detailOpen3D { from { opacity:0; transform:perspective(900px) rotateY(-12deg) translateX(30px); } to { opacity:1; transform:perspective(900px) rotateY(0deg) translateX(0); } }
-  @keyframes sidebarPop3D { from { opacity:0; transform:perspective(400px) rotateX(20deg) translateY(-8px); } to { opacity:1; transform:perspective(400px) rotateX(0deg) translateY(0); } }
+/* ── Filter chips ── */
+.feed-filters {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  margin-bottom: -1px;
+}
+.feed-filters::-webkit-scrollbar { display: none; }
 
-  /* ── App startup ── */
-  .app { animation: fadeIn 0.35s ease-out; }
-  .topbar { animation: fadeUp 0.3s ease-out; }
-  .sidebar { animation: fadeIn 0.4s ease-out 0.05s both; }
-  .feed-panel { animation: fadeUp 0.4s ease-out 0.1s both; }
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.12s, border-color 0.12s;
+  -webkit-app-region: no-drag;
+}
+.filter-chip:hover { color: var(--txt2); }
+.filter-chip.active { color: var(--txt); border-bottom-color: var(--acc); }
+.filter-chip.active .chip-count { color: var(--acc); }
+.filter-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.chip-count { font-size: 8px; font-weight: 600; color: var(--txt3); font-family: var(--mono); }
 
-  /* ── Pill nav ── */
-  .pill-nav { transition: box-shadow 0.2s; }
-  .pill-nav:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-  .pill-link { position: relative; overflow: hidden; }
-  .pill-link::before { content: ''; position: absolute; inset: 0; border-radius: 100px; background: rgba(37,99,235,0.06); opacity: 0; transform: scale(0.7); transition: opacity 0.2s, transform 0.2s; }
-  .pill-link:hover::before { opacity: 1; transform: scale(1); }
-  .pill-link.active { animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+/* ── Feed list ── */
+.feed-list-wrap { flex: 1; overflow: hidden; position: relative; }
+.feed-list-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: linear-gradient(to bottom, transparent, var(--surf));
+  pointer-events: none;
+  z-index: 2;
+}
+.feed-list { height: 100%; overflow-y: auto; }
+.feed-list::-webkit-scrollbar { display: none; }
 
-  /* ── Sidebar items ── */
-  .sidebar-item { transition: background 0.18s, color 0.18s, box-shadow 0.18s; transform-style: preserve-3d; }
-  .sidebar-item:hover { transform: perspective(200px) translateZ(6px) scale(1.08); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
-  .sidebar-item.active { animation: pulseRing 2.5s ease-in-out infinite; }
-  .sidebar-item .msym { transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
-  .sidebar-item:hover .msym { transform: scale(1.18) translateZ(2px); }
+/* ── Feed Cards ── */
+.feed-card {
+  padding: 13px 14px 12px;
+  border-bottom: 1px solid var(--bdr);
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: background 0.1s;
+  -webkit-app-region: no-drag;
+  position: relative;
+  background: var(--surf);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.feed-card:hover { background: var(--elev); }
+.feed-card.selected { background: var(--elev); }
 
-  /* ── Feed cards ── */
-  .feed-card { transition: background 0.15s, box-shadow 0.2s; transform-style: preserve-3d; will-change: transform; }
-  .feed-card.selected { background: #F0F6FF; }
-  .feed-card.animate-in { animation: cardSlideIn 0.22s ease-out both; }
+.feed-card[data-cat="bills_votes"].selected         { border-left-color: var(--cat-blue); }
+.feed-card[data-cat="executive_orders"].selected    { border-left-color: var(--cat-amber); }
+.feed-card[data-cat="court_rulings"].selected       { border-left-color: var(--cat-purple); }
+.feed-card[data-cat="government_spending"].selected { border-left-color: var(--cat-green); }
+.feed-card[data-cat="opinion"].selected             { border-left-color: var(--cat-rose); }
 
-  /* ── Filter chips ── */
-  .filter-chip { transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.18s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1); }
-  .filter-chip:hover { transform: translateY(-1px) perspective(200px) translateZ(3px); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-  .filter-chip.active { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(37,99,235,0.15); }
+.feed-card.animate-in { animation: cardSlideIn 0.2s ease-out both; }
 
-  /* ── Detail panel ── */
-  .detail-content { animation: detailOpen3D 0.38s cubic-bezier(0.22,1,0.36,1); }
+.digest-section-header {
+  padding: 7px 14px 5px;
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  background: var(--surf);
+  z-index: 1;
+  border-bottom: 1px solid var(--bdr);
+  color: var(--txt2);
+}
 
-  /* ── Cat tags ── */
-  .cat-tag { transition: transform 0.15s, box-shadow 0.15s; }
-  .cat-tag:hover { transform: scale(1.05); }
+/* ── Detail Panel ── */
+.detail-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+#bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.detail-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: rgba(9,9,10,0.60);
+}
+.detail-panel::-webkit-scrollbar { width: 3px; }
+.detail-panel::-webkit-scrollbar-track { background: transparent; }
+.detail-panel::-webkit-scrollbar-thumb { background: var(--bdr2); border-radius: 2px; }
 
-  /* ── Read button ── */
-  .read-btn { background-size: 200% 200%; background-image: linear-gradient(135deg, #3B82F6 0%, #2563EB 50%, #1D4ED8 100%); animation: gradientShift 4s ease infinite; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s; }
-  .read-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
-  .read-btn:active { transform: translateY(0) scale(0.98); }
+.detail-content {
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 44px 52px;
+  animation: detailFadeIn 0.3s ease-out;
+}
 
-  /* ── Settings ── */
-  .settings-wrap { animation: fadeUp 0.25s ease-out; }
-  .settings-section { transition: box-shadow 0.2s; }
-  .settings-section:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
-  .settings-row { transition: background 0.15s; }
-  .settings-row:hover { background: #FAFBFD; }
-  .toggle { transition: background 0.25s cubic-bezier(0.34,1.56,0.64,1); }
-  .toggle::after { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s; }
-  .toggle.on::after { box-shadow: 0 2px 6px rgba(37,99,235,0.35); }
+/* ── Category tags ── */
+.cat-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 
-  /* ── Background gradient animation ── */
-  html, body { background: linear-gradient(145deg, #C2CEDF, #A8B8CE, #B5C5DA, #A0B2C8); background-size: 300% 300%; animation: gradientShift 12s ease infinite; }
+/* ── AI Brief card ── */
+.brief-card {
+  background: transparent;
+  border: 1px dashed var(--bdr2);
+  border-left: 2px solid var(--acc);
+  padding: 14px 16px;
+  margin-bottom: 28px;
+}
 
-  .msym { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; }
+/* ── Article body ── */
+.article-body {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.82;
+  color: var(--txt);
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+.article-body p { margin-bottom: 1.2em; }
+.article-body h1, .article-body h2 {
+  font-family: var(--serif);
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 1.6em 0 0.5em;
+  line-height: 1.3;
+}
+.article-body h3, .article-body h4 {
+  font-family: var(--serif);
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 1.4em 0 0.4em;
+}
+.article-body strong, .article-body b { font-weight: 700; color: var(--txt); }
+.article-body em, .article-body i { font-style: italic; }
+.article-body a { color: var(--acc); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.article-body a:hover { opacity: 0.8; }
+.article-body blockquote {
+  border-left: 2px solid var(--bdr2);
+  padding: 4px 0 4px 16px;
+  margin: 1.2em 0;
+  color: var(--txt2);
+  font-style: italic;
+}
+.article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.2em; }
+.article-body li { margin-bottom: 0.4em; }
+.article-body img { max-width: 100%; border-radius: 2px; margin: 1em 0; }
+.article-body hr { border: none; border-top: 1px solid var(--bdr); margin: 1.8em 0; }
+.article-body figure { margin: 1.2em 0; }
+.article-body figcaption { font-size: 12px; font-family: var(--mono); color: var(--txt3); margin-top: 6px; }
 
-  button { cursor: pointer; font-family: 'Inter', sans-serif; }
-  input { font-family: 'Inter', sans-serif; }
-  input::placeholder { color: #94A3B8; }
+/* ── Read button ── */
+.read-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--acc);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 20px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.read-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.read-btn:active { transform: translateY(0); }
+
+/* ── Toast ── */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--elev);
+  color: var(--txt);
+  border: 1px solid var(--bdr2);
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  padding: 7px 14px;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Toggles ── */
+.toggle {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  background: var(--bdr2);
+  border: 1px solid var(--bdr2);
+  -webkit-app-region: no-drag;
+}
+.toggle.on { background: var(--acc); border-color: var(--acc); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  background: var(--txt2);
+  border-radius: 1px;
+  transition: transform 0.2s, background 0.2s;
+}
+.toggle.on::after { transform: translateX(14px); background: #fff; }
+
+/* ── Settings panel ── */
+.settings-wrap { max-width: 540px; margin: 0 auto; padding: 36px 44px; animation: detailFadeIn 0.2s ease-out; }
+.settings-section {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: 2px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.settings-section-title {
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  padding: 10px 16px 8px;
+  border-bottom: 1px solid var(--bdr);
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bdr);
+  transition: background 0.1s;
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row:hover { background: var(--elev); }
+.settings-row-icon {
+  width: 28px; height: 28px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--elev);
+  border: 1px solid var(--bdr);
+}
+.settings-row-label { flex: 1; }
+.settings-row-label strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--mono);
+  color: var(--txt);
+  margin-bottom: 2px;
+}
+.settings-row-label span { font-size: 10px; font-family: var(--mono); color: var(--txt2); }
+.settings-status { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; font-family: var(--mono); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary { background: var(--acc); color: #fff; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost { background: var(--elev); color: var(--txt2); border: 1px solid var(--bdr2); }
+.btn-ghost:hover { background: var(--bdr2); color: var(--txt); }
+.settings-select {
+  background: var(--elev);
+  border: 1px solid var(--bdr2);
+  border-radius: 2px;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--txt);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Skeleton ── */
+@keyframes pulse { 0%,100%{opacity:0.35} 50%{opacity:0.6} }
+.skeleton { background: var(--elev); border-radius: 2px; animation: pulse 1.8s ease-in-out infinite; }
+
+/* ── Keyframes ── */
+@keyframes fadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes cardSlideIn {
+  from { opacity:0; transform: perspective(500px) rotateX(-10deg) translateY(-10px) scale(0.97); }
+  to   { opacity:1; transform: perspective(500px) rotateX(0deg)   translateY(0)     scale(1);    }
+}
+@keyframes detailFadeIn {
+  from { opacity:0; transform: perspective(1100px) rotateY(-14deg) translateX(28px) scale(0.98); }
+  to   { opacity:1; transform: perspective(1100px) rotateY(0deg)   translateX(0)    scale(1);    }
+}
+@keyframes sectionReveal {
+  from { opacity:0; transform: perspective(600px) rotateX(-6deg) translateY(14px); }
+  to   { opacity:1; transform: perspective(600px) rotateX(0deg)  translateY(0);    }
+}
+@keyframes panelRise {
+  from { opacity:0; transform: perspective(900px) rotateX(5deg) translateY(22px) scale(0.99); }
+  to   { opacity:1; transform: perspective(900px) rotateX(0deg) translateY(0)    scale(1);    }
+}
+@keyframes topbarDrop {
+  from { opacity:0; transform: perspective(600px) rotateX(-8deg) translateY(-14px); }
+  to   { opacity:1; transform: perspective(600px) rotateX(0deg)  translateY(0);     }
+}
+@keyframes sidebarSlide {
+  from { opacity:0; transform: perspective(400px) rotateY(-12deg) translateX(-12px); }
+  to   { opacity:1; transform: perspective(400px) rotateY(0deg)   translateX(0);     }
+}
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.detail-section {
+  animation: sectionReveal 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.msym {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+button { cursor: pointer; font-family: var(--mono); }
+input  { font-family: var(--mono); }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ══ PILL NAV ══ -->
+  <!-- ══ TOP BAR ══ -->
   <div class="topbar">
+    <div class="topbar-brand">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" stroke="#C1440E" stroke-width="1.5"/>
+        <path d="M3 10C5.5 6.8 14.5 6.8 17 10C14.5 13.2 5.5 13.2 3 10Z" fill="#C1440E" opacity="0.75"/>
+        <circle cx="10" cy="10" r="2.4" fill="#C1440E"/>
+        <circle cx="10" cy="10" r="1.1" fill="#09090A"/>
+        <circle cx="9.1" cy="9.1" r="0.6" fill="white" opacity="0.6"/>
+      </svg>
+      <span class="topbar-wordmark">GovWatch</span>
+    </div>
     <nav class="pill-nav">
-      <div class="pill-logo">
-        <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
-        </svg>
-        <span>GovWatch</span>
-      </div>
-      <div class="pill-sep"></div>
-      <div class="pill-link active" id="nav-home" onclick="navigate('home')">Home</div>
-      <div class="pill-link" id="nav-digest" onclick="navigate('digest')">Daily Digest</div>
-      <div class="pill-link" id="nav-authors" onclick="navigate('authors')">Authors</div>
-      <div class="pill-link" id="nav-alerts" onclick="navigate('alerts')">Alerts</div>
+      <div class="pill-link active" id="nav-home"    onclick="navigate('home')">Feed</div>
+      <div class="pill-link"        id="nav-digest"  onclick="navigate('digest')">Brief</div>
+      <div class="pill-link"        id="nav-authors" onclick="navigate('authors')">Sources</div>
+      <div class="pill-link"        id="nav-alerts"  onclick="navigate('alerts')">Alerts</div>
     </nav>
+    <div class="topbar-date" id="topbar-date"></div>
   </div>
 
   <!-- ══ CONTENT ══ -->
@@ -241,31 +664,23 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="sidebar-logo">
-        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
-        </svg>
-      </div>
+      <div class="sidebar-logo"></div>
       <div class="sidebar-nav">
-        <div class="sidebar-item active" id="sidebar-home" data-tip="Home" onclick="navigate('home')">
-          <span class="msym">home</span>
+        <div class="sidebar-item active" id="sidebar-home"    data-tip="Feed"    onclick="navigate('home')">
+          <span class="msym">rss_feed</span>
         </div>
-        <div class="sidebar-item" id="sidebar-digest" data-tip="Daily Digest" onclick="navigate('digest')">
-          <span class="msym">auto_stories</span>
+        <div class="sidebar-item"        id="sidebar-digest"  data-tip="Brief"   onclick="navigate('digest')">
+          <span class="msym">subject</span>
         </div>
-        <div class="sidebar-item" id="sidebar-authors" data-tip="Authors" onclick="navigate('authors')">
-          <span class="msym">group</span>
+        <div class="sidebar-item"        id="sidebar-authors" data-tip="Sources" onclick="navigate('authors')">
+          <span class="msym">person_pin</span>
         </div>
-        <div class="sidebar-item" id="sidebar-alerts" data-tip="Alerts" onclick="navigate('alerts')">
+        <div class="sidebar-item"        id="sidebar-alerts"  data-tip="Alerts"  onclick="navigate('alerts')">
           <span class="msym">notifications</span>
         </div>
       </div>
       <div class="sidebar-bottom">
-        <div class="sidebar-item" id="sidebar-settings" data-tip="Settings" style="color:#8899AA" onclick="openSettings()">
+        <div class="sidebar-item" id="sidebar-settings" data-tip="Settings" onclick="openSettings()">
           <span class="msym">settings</span>
         </div>
       </div>
@@ -275,31 +690,17 @@
     <div class="feed-panel">
       <div class="feed-header">
         <div class="feed-search">
-          <span class="msym" style="font-size:15px;color:#94A3B8">search</span>
-          <input id="search-input" type="text" placeholder="Search..." oninput="onSearch(this.value)"/>
+          <span class="msym" style="font-size:14px;color:var(--txt3)">search</span>
+          <input id="search-input" type="text" placeholder="search reports..." oninput="onSearch(this.value)"/>
         </div>
         <div class="feed-filters" id="feed-filters">
-          <div class="filter-chip active" data-count-key="all" onclick="setFilter(this,'','')">
-            <div class="filter-dot" style="background:#94A3B8"></div> All<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="substack" onclick="setFilter(this,'','substack')">
-            <div class="filter-dot" style="background:#FDA4AF"></div> Substackers<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="bills_votes" onclick="setFilter(this,'bills_votes','')">
-            <div class="filter-dot" style="background:#60A5FA"></div> Bills &amp; Votes<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="executive_orders" onclick="setFilter(this,'executive_orders','')">
-            <div class="filter-dot" style="background:#FCD34D"></div> Exec Orders<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="court_rulings" onclick="setFilter(this,'court_rulings','')">
-            <div class="filter-dot" style="background:#C4B5FD"></div> Court Rulings<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="government_spending" onclick="setFilter(this,'government_spending','')">
-            <div class="filter-dot" style="background:#6EE7B7"></div> Spending<span class="chip-count"></span>
-          </div>
-          <div class="filter-chip" data-count-key="bookmarks" onclick="setFilter(this,'','bookmarks')">
-            <span class="msym" style="font-size:11px;color:#FBBF24">bookmark</span> Bookmarks<span class="chip-count"></span>
-          </div>
+          <div class="filter-chip active" data-count-key="all"                onclick="setFilter(this,'','')">All<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="substack"           onclick="setFilter(this,'','substack')">Writers<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="bills_votes"        onclick="setFilter(this,'bills_votes','')">Bills<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="executive_orders"   onclick="setFilter(this,'executive_orders','')">Orders<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="court_rulings"      onclick="setFilter(this,'court_rulings','')">Courts<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="government_spending" onclick="setFilter(this,'government_spending','')">Spend<span class="chip-count"></span></div>
+          <div class="filter-chip"        data-count-key="bookmarks"          onclick="setFilter(this,'','bookmarks')">Saved<span class="chip-count"></span></div>
         </div>
       </div>
       <div class="feed-list-wrap">
@@ -308,30 +709,120 @@
     </div>
 
     <!-- DETAIL PANEL -->
-    <div class="detail-panel" id="detail-panel">
+    <div class="detail-wrap">
+      <canvas id="bg-canvas"></canvas>
+      <div class="detail-panel" id="detail-panel">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
-        <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.15">
-          <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-          <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-          <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-          <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-          <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        <svg width="38" height="38" viewBox="0 0 20 20" fill="none" opacity="0.1">
+          <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" stroke="#C1440E" stroke-width="1.5"/>
+          <path d="M3 10C5.5 6.8 14.5 6.8 17 10C14.5 13.2 5.5 13.2 3 10Z" fill="#C1440E"/>
+          <circle cx="10" cy="10" r="2.4" fill="#C1440E"/>
         </svg>
-        <p style="font-size:13px;color:#94A3B8;font-weight:500">Select an article to read</p>
+        <p style="font-size:9px;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3)">Select a report to read</p>
       </div>
     </div>
+    </div><!-- /detail-wrap -->
 
   </div><!-- /content -->
 
-</div>
+</div><!-- /app -->
+
+<div id="toast"></div>
 
 <script>
+// ─── Mock data interceptor ────────────────────────────────────
+// Intercepts all localhost:3000 calls and returns dummy data.
+// Remove this block (and the fetch override below) when backend is live.
+const MOCK_ARTICLES = [
+  { id:1,  title:'H.R. 4892 — Agricultural Resilience and Rural Support Act of 2025', category:'bills_votes',         source:'congress',        author_name:null,           ai_brief:'This bill proposes a $4.2 billion overhaul of rural infrastructure subsidies and expands crop insurance coverage to small farms under 500 acres. It passed the House Agriculture Committee 28–6 on Thursday.', content:`<p>The House Agriculture Committee advanced H.R. 4892 with bipartisan support Thursday, sending the landmark rural investment bill to the full House floor. The legislation would direct $4.2 billion toward rural broadband, grain storage upgrades, and crop insurance expansion over five years.</p><p>Supporters argue the bill addresses a decade of underinvestment in agricultural infrastructure, while critics from the fiscal caucus contend it lacks sufficient offsets. An amendment requiring USDA audits of current subsidy programs was adopted 31–3.</p><p>The bill now heads to a floor vote expected next week, where leadership believes it has enough votes to pass with some Democratic support.</p>`, source_url:'https://congress.gov', published_at: new Date(Date.now()-2*3600000).toISOString() },
+  { id:2,  title:'Executive Order 14211: Expanding Federal Contractor Disclosure Requirements for AI Systems', category:'executive_orders',    source:'federalregister', author_name:null,           ai_brief:'This executive order mandates that all federal contractors using AI systems in government-facing services must register those systems with a new GSA clearinghouse by Q3 2025. Non-compliance triggers suspension of contract eligibility.', content:`<p>President Biden signed Executive Order 14211 Wednesday, establishing the first comprehensive registration regime for artificial intelligence systems deployed by federal contractors. The order gives agencies 180 days to implement new procurement clauses.</p><p>The General Services Administration will maintain a public registry of approved AI systems, with each entry requiring documentation of training data provenance, bias audit results, and human oversight protocols.</p><p>Industry groups have raised concerns about compliance timelines, while civil liberties advocates praised the transparency requirements. The order takes effect immediately for new contracts.</p>`, source_url:'https://federalregister.gov', published_at: new Date(Date.now()-5*3600000).toISOString() },
+  { id:3,  title:'Fifth Circuit Rules CFPB Funding Mechanism Unconstitutional in 2–1 Decision', category:'court_rulings',       source:'courtlistener',   author_name:null,           ai_brief:'A divided Fifth Circuit panel held that the CFPB\'s self-funding structure violates the Appropriations Clause, creating a direct circuit split with the DC Circuit. The decision invalidates several recent enforcement actions pending appeal.', content:`<p>The U.S. Court of Appeals for the Fifth Circuit ruled 2–1 Thursday that the Consumer Financial Protection Bureau's funding mechanism — drawing directly from Federal Reserve earnings rather than congressional appropriations — violates the Constitution's Appropriations Clause.</p><p>The decision, authored by Judge Edith Jones, creates a sharp circuit split with the D.C. Circuit, which upheld the same funding structure in 2021. Legal experts widely expect the Supreme Court to take up the question in its next term.</p><p>The ruling immediately affects several pending CFPB enforcement actions within the Fifth Circuit's jurisdiction, which covers Texas, Louisiana, and Mississippi.</p>`, source_url:'https://courtlistener.com', published_at: new Date(Date.now()-8*3600000).toISOString() },
+  { id:4,  title:'Defense Dept. Awards $2.8B in Cybersecurity Infrastructure Contracts to Booz Allen, SAIC', category:'government_spending', source:'usaspending',     author_name:null,           ai_brief:'The DoD obligated $2.8 billion across two multi-year contracts for zero-trust network architecture upgrades across classified and unclassified networks. Awards were made under the SHARPE program vehicle.', content:`<p>The Department of Defense announced Thursday the award of two cybersecurity contracts totaling $2.8 billion to Booz Allen Hamilton and Science Applications International Corporation (SAIC) for zero-trust architecture implementation across Pentagon networks.</p><p>The contracts run through 2029 and cover both classified and unclassified systems. Work includes endpoint detection and response deployment, privileged access management, and continuous authorization tooling.</p><p>The awards come as the DoD races to meet Office of Management and Budget zero-trust mandates ahead of the 2027 deadline.</p>`, source_url:'https://usaspending.gov', published_at: new Date(Date.now()-11*3600000).toISOString() },
+  { id:5,  title:'The DOGE Playbook Is Coming for Independent Agencies', category:'opinion',             source:'substack',        author_name:'Judd Legum', ai_brief:'Legum argues that recent OMB memos signal an unprecedented attempt to bring independent agencies — including the FTC and FCC — under direct White House budget authority, bypassing the statutory firewalls Congress erected decades ago.', content:`<p>Something important happened last Tuesday that hasn't gotten nearly enough attention. A two-paragraph OMB memo, buried in the Federal Register under a routine administrative docket, quietly asserted White House authority to review and modify budget requests from independent agencies before they're submitted to Congress.</p><p>This is not normal. Independent agencies — the FTC, FCC, CFPB, SEC — have their own budget lines precisely to insulate them from political interference. The Supreme Court has repeatedly upheld these firewalls.</p><p>But the current administration appears to be testing whether it can achieve through budget pressure what it cannot achieve through removal power. The memos are careful, lawyerly, and designed to provoke a lawsuit — one the administration believes it can win.</p>`, source_url:'https://popular.info', published_at: new Date(Date.now()-14*3600000).toISOString() },
+  { id:6,  title:'S. 1847 — Restoring Article I Budgetary Authority Act Clears Senate Budget Committee', category:'bills_votes',         source:'congress',        author_name:null,           ai_brief:'The bill would codify impoundment control reforms and tighten presidential rescission authority, responding to recent OMB guidance that critics say undermines congressional appropriations power.', content:`<p>The Senate Budget Committee voted 12–9 along party lines Wednesday to advance S. 1847, a bill that would codify restrictions on presidential impoundment authority and require OMB to spend appropriated funds within 45 days of enactment unless Congress affirmatively approves a deferral.</p><p>Committee Chair Sheldon Whitehouse called the vote "a reassertion of the power of the purse," while ranking member Chuck Grassley argued the bill would hamstring executive flexibility in budget execution.</p>`, source_url:'https://congress.gov', published_at: new Date(Date.now()-18*3600000).toISOString() },
+  { id:7,  title:'DOJ Antitrust Division Opens Investigation into Agricultural Input Market Consolidation', category:'executive_orders',    source:'federalregister', author_name:null,           ai_brief:'A new Federal Register notice announces a broad DOJ inquiry into competitive conditions in seed, fertilizer, and crop protection markets following a 2024 FTC study that found concentration ratios above 70% in several segments.', content:`<p>The Department of Justice Antitrust Division published notice Wednesday of a wide-ranging investigation into competition in agricultural input markets, focusing on seed genetics licensing, wholesale fertilizer distribution, and crop protection chemical supply chains.</p><p>The inquiry follows an FTC study released last fall that found four-firm concentration ratios above 70% in corn and soybean seed markets and above 80% in certain herbicide formulations.</p>`, source_url:'https://federalregister.gov', published_at: new Date(Date.now()-22*3600000).toISOString() },
+  { id:8,  title:'Courts Are About to Decide the Limits of the Major Questions Doctrine', category:'opinion',             source:'substack',        author_name:'Heather Cox Richardson', ai_brief:'Richardson traces how conservative legal strategists have spent three decades engineering the major questions doctrine as a tool to roll back the administrative state, and why four pending circuit court cases may force the Supreme Court to define its limits.', content:`<p>The major questions doctrine — the principle that agencies need clear congressional authorization to take actions of vast economic and political significance — has become the Swiss Army knife of conservative administrative law. Since its formal articulation in West Virginia v. EPA in 2022, lower courts have applied it to block rules on student loans, vaccine mandates, net neutrality, and now climate disclosures.</p><p>What's less understood is the deliberate intellectual infrastructure built over 30 years to get here. The Federalist Society's administrative law working groups, the Koch network's legal strategy shops, and a rotating cast of conservative academics spent decades developing the doctrine from scattered dicta into a coherent framework.</p>`, source_url:'https://heatherrichardson.substack.com', published_at: new Date(Date.now()-26*3600000).toISOString() },
+  { id:9,  title:'Treasury Dept. Finalizes Beneficial Ownership Reporting Rules Under Corporate Transparency Act', category:'executive_orders',    source:'federalregister', author_name:null,           ai_brief:'FinCEN published final rules requiring most U.S. companies formed after January 1, 2024 to file beneficial ownership information within 30 days of formation. Existing companies have until year-end to comply.', content:`<p>The Financial Crimes Enforcement Network finalized rules Thursday implementing the Corporate Transparency Act's beneficial ownership disclosure requirements, completing the last major regulatory piece of the landmark anti-money laundering statute.</p><p>Under the final rule, corporations, LLCs, and similar entities must report the full legal name, date of birth, address, and government ID of any individual owning 25% or more of the entity or exercising substantial control.</p>`, source_url:'https://federalregister.gov', published_at: new Date(Date.now()-30*3600000).toISOString() },
+  { id:10, title:'Pentagon Budget Request Includes $14.7B for AI and Autonomous Systems, a 340% Increase', category:'government_spending', source:'usaspending',     author_name:null,           ai_brief:'The FY2026 defense budget submission allocates $14.7B to AI, autonomy, and directed energy programs — a 340% increase over FY2023 levels — funded largely by retiring legacy platform programs in fighter aviation and surface combatants.', content:`<p>The Biden administration's FY2026 defense budget request, submitted to Congress Wednesday, includes $14.7 billion for artificial intelligence, autonomous systems, and directed energy programs — a figure that represents a 340% real increase over comparable FY2023 spending.</p><p>The request is funded in part by proposed retirements of older weapons platforms, including early-model F-35A variants, two Ticonderoga-class cruisers, and the E-3 Sentry airborne warning aircraft. Service chiefs are expected to push back on some retirements during upcoming posture hearings.</p>`, source_url:'https://usaspending.gov', published_at: new Date(Date.now()-36*3600000).toISOString() },
+];
+
+const MOCK_AUTHORS = [
+  { id:1, name:'Judd Legum',            substack_slug:'popular' },
+  { id:2, name:'Heather Cox Richardson', substack_slug:'heatherrichardson' },
+  { id:3, name:'Aaron Parnas',           substack_slug:'aaronparnas' },
+];
+
+const MOCK_DIGEST = [
+  { category:'bills_votes',         articles: MOCK_ARTICLES.filter(a=>a.category==='bills_votes'),         summary:'Two significant legislative measures advanced this week: an agricultural infrastructure overhaul and a push to reassert congressional budget authority in response to executive branch OMB maneuvers.' },
+  { category:'executive_orders',    articles: MOCK_ARTICLES.filter(a=>a.category==='executive_orders'),    summary:'Federal Register activity this week centered on AI contractor disclosure requirements, DOJ antitrust action in agriculture, and finalization of beneficial ownership reporting rules.' },
+  { category:'court_rulings',       articles: MOCK_ARTICLES.filter(a=>a.category==='court_rulings'),       summary:'The Fifth Circuit\'s CFPB ruling is the week\'s dominant legal development, creating a circuit split almost certain to land at the Supreme Court in the coming term.' },
+  { category:'government_spending', articles: MOCK_ARTICLES.filter(a=>a.category==='government_spending'), summary:'Defense spending dominated procurement news, with $2.8B in cybersecurity awards and a FY2026 budget request showing a dramatic pivot toward AI and autonomous systems.' },
+  { category:'opinion',             articles: MOCK_ARTICLES.filter(a=>a.category==='opinion'),             summary:'Commentators this week focused on structural threats to administrative independence and the long legal campaign behind the major questions doctrine.' },
+];
+
+const _realFetch = window.fetch.bind(window);
+window.fetch = async function(url, opts) {
+  const u = typeof url === 'string' ? url : url.toString();
+  if (!u.includes('localhost:3000')) return _realFetch(url, opts);
+
+  await new Promise(r => setTimeout(r, 80 + Math.random() * 120)); // simulate latency
+
+  if (u.includes('/health'))
+    return mockResp({ status:'ok', timestamp: new Date().toISOString() });
+
+  if (u.includes('/api/settings'))
+    return mockResp({ sources:{ substack:true, congress:true, federalregister:true, courtlistener:true, usaspending:true }, feed:{ days:30, pageSize:50 } });
+
+  if (u.includes('/api/poll'))
+    return mockResp({ ok:true });
+
+  if (u.match(/\/api\/articles\/(\d+)/)) {
+    const id = parseInt(u.match(/\/api\/articles\/(\d+)/)[1]);
+    const a = MOCK_ARTICLES.find(x => x.id === id) || MOCK_ARTICLES[0];
+    return mockResp(a);
+  }
+
+  if (u.includes('/api/digest/today'))
+    return mockResp({ digest: MOCK_DIGEST });
+
+  if (u.includes('/api/digest'))
+    return mockResp({ digest: MOCK_DIGEST });
+
+  if (u.includes('/api/authors') && (!opts || opts.method === 'GET' || !opts.method))
+    return mockResp({ authors: MOCK_AUTHORS });
+
+  if (u.includes('/api/authors') && opts?.method === 'POST')
+    return mockResp({ id: Date.now(), name:'New Author', substack_slug:'new' });
+
+  if (u.includes('/api/authors') && opts?.method === 'DELETE')
+    return mockResp({ ok:true });
+
+  if (u.includes('/api/feed')) {
+    const params = new URL(u, 'http://x').searchParams;
+    const cat = params.get('category') || '';
+    const src = params.get('source')   || '';
+    let articles = [...MOCK_ARTICLES];
+    if (cat) articles = articles.filter(a => a.category === cat);
+    if (src) articles = articles.filter(a => a.source   === src);
+    return mockResp({ articles });
+  }
+
+  return mockResp({});
+};
+
+function mockResp(data) {
+  const body = JSON.stringify(data);
+  return { ok:true, status:200, json: () => Promise.resolve(JSON.parse(body)) };
+}
+// ─── End mock ─────────────────────────────────────────────────
+
 const API = 'http://localhost:3000';
-const PREFS_KEY = 'govwatch_notif_prefs';
+const PREFS_KEY    = 'govwatch_notif_prefs';
 const BOOKMARKS_KEY = 'govwatch_bookmarks';
 
 function loadBookmarks() { try { return new Set(JSON.parse(localStorage.getItem(BOOKMARKS_KEY)) || []); } catch { return new Set(); } }
 function saveBookmarks(set) { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify([...set])); }
+
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -358,16 +849,16 @@ function toggleBookmark(id, e) {
   const bm = loadBookmarks();
   if (bm.has(id)) bm.delete(id); else bm.add(id);
   saveBookmarks(bm);
-  // Update all bookmark icons for this article
   document.querySelectorAll(`[data-bm="${id}"]`).forEach(el => {
-    el.textContent = bm.has(id) ? 'bookmark' : 'bookmark_border';
-    el.style.color  = bm.has(id) ? '#2563EB' : '';
-    el.style.fontVariationSettings = bm.has(id) ? "'FILL' 1" : "'FILL' 0";
+    const on = bm.has(id);
+    el.textContent = on ? 'bookmark' : 'bookmark_border';
+    el.style.color  = on ? 'var(--acc)' : 'var(--txt3)';
+    el.style.fontVariationSettings = on ? "'FILL' 1" : "'FILL' 0";
   });
   if (currentSource === 'bookmarks') renderFeed(allArticles);
 }
 
-// ─── State ───────────────────────────────────────────────────────
+// ─── State ──────────────────────────────────────────────────
 let currentView     = 'home';
 let currentCategory = '';
 let currentSource   = '';
@@ -376,16 +867,16 @@ let allArticles     = [];
 let allDigestGroups = [];
 let searchQuery     = '';
 
-// ─── Category config ─────────────────────────────────────────────
+// ─── Category config ─────────────────────────────────────────
 const CAT = {
-  bills_votes:         { label:'Bills & Votes',      bg:'rgba(59,130,246,0.12)',  text:'#93C5FD', border:'rgba(59,130,246,0.3)',  dot:'#60A5FA'  },
-  executive_orders:    { label:'Exec Orders',         bg:'rgba(245,158,11,0.12)', text:'#FCD34D', border:'rgba(245,158,11,0.3)',  dot:'#FCD34D'  },
-  court_rulings:       { label:'Court Rulings',       bg:'rgba(167,139,250,0.12)',text:'#C4B5FD', border:'rgba(167,139,250,0.3)', dot:'#C4B5FD'  },
-  government_spending: { label:'Spending',             bg:'rgba(52,211,153,0.12)', text:'#6EE7B7', border:'rgba(52,211,153,0.3)',  dot:'#6EE7B7'  },
-  opinion:             { label:'Opinion',              bg:'rgba(244,114,182,0.12)',text:'#FDA4AF', border:'rgba(244,114,182,0.3)', dot:'#FDA4AF'  },
+  bills_votes:         { label:'Bills & Votes',   bg:'rgba(75,142,200,0.08)',  text:'#4B8EC8', border:'rgba(75,142,200,0.2)',   dot:'#4B8EC8'  },
+  executive_orders:    { label:'Exec Order',       bg:'rgba(200,146,43,0.08)', text:'#C8922B', border:'rgba(200,146,43,0.2)',   dot:'#C8922B'  },
+  court_rulings:       { label:'Court Ruling',     bg:'rgba(139,110,200,0.08)',text:'#8B6EC8', border:'rgba(139,110,200,0.2)',  dot:'#8B6EC8'  },
+  government_spending: { label:'Spending',          bg:'rgba(58,154,110,0.08)', text:'#3A9A6E', border:'rgba(58,154,110,0.2)',   dot:'#3A9A6E'  },
+  opinion:             { label:'Opinion',           bg:'rgba(200,107,139,0.08)',text:'#C86B8B', border:'rgba(200,107,139,0.2)',  dot:'#C86B8B'  },
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────
 function esc(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -400,16 +891,22 @@ function relativeTime(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
   if (diff < 0) return 'recently';
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
+  if (mins < 1)  return 'just now';
   if (mins < 60) return `${mins}m`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
+  if (hrs < 24)  return `${hrs}h`;
   const days = Math.floor(hrs / 24);
   return days === 1 ? 'Yesterday' : `${days}d`;
 }
 
 function avatarUrl(name, source) {
-  const c = ({ congress:'162850/93c5fd', federalregister:'2d1a00/fcd34d', courtlistener:'1e1030/c4b5fd', usaspending:'0a1e15/6ee7b7', substack:'162850/93c5fd' }[source] || '111827/94a3b8').split('/');
+  const c = ({
+    congress:        '0D1A2E/4B8EC8',
+    federalregister: '1A0E00/C8922B',
+    courtlistener:   '120A1E/8B6EC8',
+    usaspending:     '061408/3A9A6E',
+    substack:        '1A0A12/C86B8B',
+  }[source] || '111110/78736A').split('/');
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${c[0]}&color=${c[1]}&size=64&bold=true`;
 }
 
@@ -429,7 +926,19 @@ function openUrl(url) {
   else window.open(url, '_blank');
 }
 
-// ─── Navigation ──────────────────────────────────────────────────
+// ─── Date ticker ─────────────────────────────────────────────
+function updateTopbarDate() {
+  const now = new Date();
+  const days   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const d = `${days[now.getDay()]} ${String(now.getDate()).padStart(2,'0')} ${months[now.getMonth()]} ${now.getFullYear()} · ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const el = document.getElementById('topbar-date');
+  if (el) el.textContent = d;
+}
+updateTopbarDate();
+setInterval(updateTopbarDate, 30000);
+
+// ─── Navigation ──────────────────────────────────────────────
 function navigate(view) {
   currentView = view;
   selectedId  = null;
@@ -444,7 +953,6 @@ function navigate(view) {
   if (sidebarEl) sidebarEl.classList.add('active');
 
   document.getElementById('feed-filters').style.display = view === 'home' ? '' : 'none';
-
   showEmptyDetail();
 
   if      (view === 'home')    loadFeed();
@@ -453,7 +961,7 @@ function navigate(view) {
   else if (view === 'alerts')  loadAlertsView();
 }
 
-// ─── SETTINGS ────────────────────────────────────────────────────
+// ─── Settings ────────────────────────────────────────────────
 function openSettings() {
   document.querySelectorAll('.pill-link').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
@@ -466,7 +974,7 @@ function openSettings() {
 
 async function loadSettingsView() {
   const panel = document.getElementById('detail-panel');
-  panel.innerHTML = `<div class="settings-wrap"><div class="skeleton" style="height:28px;width:160px;margin-bottom:24px"></div>${[1,2,3].map(()=>`<div class="settings-section"><div style="height:40px"></div><div style="height:56px;border-top:1px solid #F0F4F8"></div><div style="height:56px;border-top:1px solid #F0F4F8"></div></div>`).join('')}</div>`;
+  panel.innerHTML = `<div class="settings-wrap"><div class="skeleton" style="height:12px;width:120px;margin-bottom:24px"></div>${[1,2,3].map(()=>`<div class="settings-section" style="margin-bottom:12px"><div style="height:34px;background:var(--surf)"></div><div style="height:50px;border-top:1px solid var(--bdr)"></div><div style="height:50px;border-top:1px solid var(--bdr)"></div></div>`).join('')}</div>`;
 
   const [settingsRes, healthRes] = await Promise.allSettled([
     fetch(`${API}/api/settings`),
@@ -481,74 +989,63 @@ async function loadSettingsView() {
   const healthData = healthy ? await healthRes.value.json() : null;
 
   const sources = [
-    { key: 'substack',        label: 'Substack',         desc: 'Political writers & newsletters', icon: 'edit_note',       color: '#EFF6FF', iconColor: '#2563EB' },
-    { key: 'congress',        label: 'Congress.gov',     desc: 'Bills, votes, and legislation',   icon: 'account_balance', color: '#FFF7ED', iconColor: '#EA580C' },
-    { key: 'federalregister', label: 'Federal Register', desc: 'Executive orders & regulations',  icon: 'edit_document',   color: '#FFFBEB', iconColor: '#D97706' },
-    { key: 'courtlistener',   label: 'CourtListener',    desc: 'Court filings and rulings',       icon: 'gavel',           color: '#F5F3FF', iconColor: '#7C3AED' },
-    { key: 'usaspending',     label: 'USASpending',      desc: 'Government spending data',        icon: 'payments',        color: '#ECFDF5', iconColor: '#059669' },
+    { key: 'substack',        label: 'Substack',         desc: 'Political writers & newsletters', icon: 'edit_note',       iconColor: '#C86B8B' },
+    { key: 'congress',        label: 'Congress.gov',     desc: 'Bills, votes, and legislation',   icon: 'account_balance', iconColor: '#4B8EC8' },
+    { key: 'federalregister', label: 'Federal Register', desc: 'Executive orders & regulations',  icon: 'edit_document',   iconColor: '#C8922B' },
+    { key: 'courtlistener',   label: 'CourtListener',    desc: 'Court filings and rulings',       icon: 'gavel',           iconColor: '#8B6EC8' },
+    { key: 'usaspending',     label: 'USASpending',      desc: 'Government spending data',        icon: 'payments',        iconColor: '#3A9A6E' },
   ];
 
   const feedDays = settings.feed?.days ?? 30;
   const feedSize = settings.feed?.pageSize ?? 50;
+  const hc = healthy ? '#3A9A6E' : '#C1440E';
 
   panel.innerHTML = `
   <div class="settings-wrap">
-    <h1 style="font-size:22px;font-weight:800;color:#0F172A;letter-spacing:-0.3px;margin-bottom:24px">Settings</h1>
+    <h1 style="font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:0.2em;text-transform:uppercase;color:var(--txt2);margin-bottom:24px">Settings</h1>
 
-    <!-- Connection -->
     <div class="settings-section">
       <div class="settings-section-title">Backend</div>
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:${healthy ? '#ECFDF5' : '#FEF2F2'}">
-          <span class="msym" style="font-size:16px;color:${healthy ? '#059669' : '#DC2626'}">dns</span>
-        </div>
+        <div class="settings-row-icon"><span class="msym" style="font-size:14px;color:${hc}">dns</span></div>
         <div class="settings-row-label">
           <strong>API Server</strong>
           <span>${healthy ? `Connected · ${healthData?.timestamp ? new Date(healthData.timestamp).toLocaleTimeString() : ''}` : 'Not connected'}</span>
         </div>
         <div class="settings-status">
-          <div class="status-dot" style="background:${healthy ? '#22C55E' : '#EF4444'}"></div>
-          <span style="color:${healthy ? '#16A34A' : '#DC2626'};font-size:12px;font-weight:600">${healthy ? 'Online' : 'Offline'}</span>
+          <div class="status-dot" style="background:${hc}"></div>
+          <span style="color:${hc}">${healthy ? 'Online' : 'Offline'}</span>
         </div>
       </div>
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:#EFF6FF">
-          <span class="msym" style="font-size:16px;color:#2563EB">refresh</span>
-        </div>
+        <div class="settings-row-icon"><span class="msym" style="font-size:14px;color:var(--txt2)">refresh</span></div>
         <div class="settings-row-label">
           <strong>Refresh Now</strong>
           <span>Trigger all enabled pollers immediately</span>
         </div>
         <button class="settings-btn btn-primary" id="poll-btn" onclick="triggerPoll()">
-          <span class="msym" style="font-size:14px">sync</span> Refresh
+          <span class="msym" style="font-size:13px">sync</span> Refresh
         </button>
       </div>
     </div>
 
-    <!-- Data Sources -->
     <div class="settings-section">
       <div class="settings-section-title">Data Sources</div>
       ${sources.map(s => `
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:${s.color}">
-          <span class="msym" style="font-size:16px;color:${s.iconColor}">${s.icon}</span>
-        </div>
+        <div class="settings-row-icon"><span class="msym" style="font-size:14px;color:${s.iconColor}">${s.icon}</span></div>
         <div class="settings-row-label">
           <strong>${s.label}</strong>
           <span>${s.desc}</span>
         </div>
-        <div class="toggle ${settings.sources?.[s.key] !== false ? 'on' : ''}"
-          onclick="toggleSource('${s.key}', this)"></div>
+        <div class="toggle ${settings.sources?.[s.key] !== false ? 'on' : ''}" onclick="toggleSource('${s.key}', this)"></div>
       </div>`).join('')}
     </div>
 
-    <!-- Feed Preferences -->
     <div class="settings-section">
       <div class="settings-section-title">Feed</div>
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:#F8FAFC">
-          <span class="msym" style="font-size:16px;color:#64748B">history</span>
-        </div>
+        <div class="settings-row-icon"><span class="msym" style="font-size:14px;color:var(--txt2)">history</span></div>
         <div class="settings-row-label">
           <strong>History window</strong>
           <span>How many days of articles to load</span>
@@ -558,9 +1055,7 @@ async function loadSettingsView() {
         </select>
       </div>
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:#F8FAFC">
-          <span class="msym" style="font-size:16px;color:#64748B">format_list_numbered</span>
-        </div>
+        <div class="settings-row-icon"><span class="msym" style="font-size:14px;color:var(--txt2)">format_list_numbered</span></div>
         <div class="settings-row-label">
           <strong>Articles per load</strong>
           <span>Maximum articles shown in feed</span>
@@ -571,17 +1066,14 @@ async function loadSettingsView() {
       </div>
     </div>
 
-    <!-- About -->
     <div class="settings-section">
       <div class="settings-section-title">About</div>
       <div class="settings-row">
-        <div class="settings-row-icon" style="background:#EFF6FF">
-          <svg width="18" height="18" viewBox="0 0 28 28" fill="none">
-            <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-            <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-            <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-            <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-            <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+        <div class="settings-row-icon">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" stroke="#C1440E" stroke-width="1.5"/>
+            <path d="M3 10C5.5 6.8 14.5 6.8 17 10C14.5 13.2 5.5 13.2 3 10Z" fill="#C1440E" opacity="0.75"/>
+            <circle cx="10" cy="10" r="2.4" fill="#C1440E"/>
           </svg>
         </div>
         <div class="settings-row-label">
@@ -589,7 +1081,7 @@ async function loadSettingsView() {
           <span>Version 1.0.0</span>
         </div>
         <button class="settings-btn btn-ghost" onclick="openUrl('https://github.com/kitkatattackk/GovWatch')">
-          <span class="msym" style="font-size:14px">open_in_new</span> GitHub
+          <span class="msym" style="font-size:13px">open_in_new</span> GitHub
         </button>
       </div>
     </div>
@@ -617,17 +1109,17 @@ async function updateFeedSetting(key, value) {
 async function triggerPoll() {
   const btn = document.getElementById('poll-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="msym" style="font-size:14px;animation:spin 1s linear infinite">sync</span> Refreshing...';
+  btn.innerHTML = '<span class="msym" style="font-size:13px;animation:spin 1s linear infinite">sync</span> Syncing...';
   try {
     await fetch(`${API}/api/poll`, { method: 'POST' });
     setTimeout(() => loadSettingsView(), 1000);
   } catch {
     btn.disabled = false;
-    btn.innerHTML = '<span class="msym" style="font-size:14px">sync</span> Refresh';
+    btn.innerHTML = '<span class="msym" style="font-size:13px">sync</span> Refresh';
   }
 }
 
-// ─── Filter ──────────────────────────────────────────────────────
+// ─── Filter ──────────────────────────────────────────────────
 function setFilter(el, cat, source) {
   currentCategory = cat;
   currentSource   = source;
@@ -640,37 +1132,37 @@ function setFilter(el, cat, source) {
 
 async function updateChipCounts() {
   try {
-    const res = await fetch(`${API}/api/feed?page_size=200`);
+    const res  = await fetch(`${API}/api/feed?page_size=200`);
     const data = await res.json();
     const articles = data.articles || [];
     const bm = loadBookmarks();
     const counts = {
-      all:                articles.length,
-      substack:           articles.filter(a => a.source === 'substack').length,
-      bills_votes:        articles.filter(a => a.category === 'bills_votes').length,
-      executive_orders:   articles.filter(a => a.category === 'executive_orders').length,
-      court_rulings:      articles.filter(a => a.category === 'court_rulings').length,
-      government_spending:articles.filter(a => a.category === 'government_spending').length,
-      bookmarks:          bm.size,
+      all:                 articles.length,
+      substack:            articles.filter(a => a.source === 'substack').length,
+      bills_votes:         articles.filter(a => a.category === 'bills_votes').length,
+      executive_orders:    articles.filter(a => a.category === 'executive_orders').length,
+      court_rulings:       articles.filter(a => a.category === 'court_rulings').length,
+      government_spending: articles.filter(a => a.category === 'government_spending').length,
+      bookmarks:           bm.size,
     };
     document.querySelectorAll('.filter-chip[data-count-key]').forEach(chip => {
       const key = chip.dataset.countKey;
       const el  = chip.querySelector('.chip-count');
       if (el && counts[key] !== undefined) {
-        el.textContent = counts[key] > 99 ? '99+' : counts[key] || '';
+        el.textContent = counts[key] > 99 ? ' 99+' : (counts[key] ? ` ${counts[key]}` : '');
       }
     });
   } catch(e) { /* silent */ }
 }
 
-// ─── Search ──────────────────────────────────────────────────────
+// ─── Search ──────────────────────────────────────────────────
 function onSearch(q) {
   searchQuery = q.toLowerCase().trim();
   if      (currentView === 'home')   renderFeed(allArticles);
   else if (currentView === 'digest') renderDigest(allDigestGroups);
 }
 
-// ─── HOME FEED ───────────────────────────────────────────────────
+// ─── HOME FEED ───────────────────────────────────────────────
 async function loadFeed() {
   document.getElementById('feed-list').innerHTML = skeletons();
   try {
@@ -683,10 +1175,9 @@ async function loadFeed() {
 
     if (allArticles.length === 0) {
       document.getElementById('feed-list').innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;gap:10px;color:#94A3B8;font-size:12px;text-align:center;padding:0 20px">
-          <span class="msym" style="font-size:28px;animation:spin 1.2s linear infinite;color:#BFDBFE">sync</span>
-          <span style="font-weight:600;color:#64748B">Fetching latest articles…</span>
-          <span>Polling sources for the first time</span>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;gap:10px">
+          <span class="msym" style="font-size:22px;animation:spin 1.2s linear infinite;color:var(--txt3)">sync</span>
+          <span style="font-size:9px;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3)">Fetching reports...</span>
         </div>`;
       await fetch(`${API}/api/poll`, { method: 'POST' });
       setTimeout(loadFeed, 8000);
@@ -695,7 +1186,6 @@ async function loadFeed() {
 
     renderFeed(allArticles);
   } catch(e) {
-    console.error('Feed fetch failed:', e);
     document.getElementById('feed-list').innerHTML = errMsg('Cannot connect to backend on port 3000.');
   }
 }
@@ -708,65 +1198,70 @@ function renderFeed(articles) {
         (a.source||'').toLowerCase().includes(searchQuery))
     : articles;
 
-
-
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No articles found.');
     return;
   }
 
   const bm = loadBookmarks();
-
-  // If bookmarks filter active, only show bookmarked articles
   const visible = currentSource === 'bookmarks' ? filtered.filter(a => bm.has(a.id)) : filtered;
 
   if (visible.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(
-      currentSource === 'bookmarks' ? 'No bookmarks yet — click the bookmark icon on any article.' :
+      currentSource === 'bookmarks' ? 'No bookmarks yet.' :
       searchQuery ? `No results for "${esc(searchQuery)}"` : 'No articles found.'
     );
     return;
   }
 
   document.getElementById('feed-list').innerHTML = visible.map((a, i) => {
-    const name     = sourceLabel(a);
-    const time     = relativeTime(a.published_at || a.created_at);
-    const selected = a.id === selectedId ? ' selected' : '';
-    const brief    = a.ai_brief
-      ? `<div style="font-size:11px;color:#94A3B8;margin-top:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(a.ai_brief)}</div>`
+    const name      = sourceLabel(a);
+    const time      = relativeTime(a.published_at || a.created_at);
+    const selected  = a.id === selectedId ? ' selected' : '';
+    const cat       = CAT[a.category] || { label: a.category || '', text: 'var(--txt3)', dot: 'var(--txt3)' };
+    const brief     = a.ai_brief
+      ? `<div style="font-size:10px;font-family:var(--mono);color:var(--txt3);margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;line-height:1.5">${esc(a.ai_brief)}</div>`
       : '';
-    const delay       = Math.min(i * 35, 400);
+    const delay        = Math.min(i * 28, 360);
     const isBookmarked = bm.has(a.id);
     return `
-    <div class="feed-card animate-in${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}" style="animation-delay:${delay}ms">
-      <div style="display:flex;gap:9px;align-items:flex-start">
-        <img src="${avatarUrl(name, a.source)}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:1px"/>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:3px">
-            <span style="font-size:11px;font-weight:600;color:#64748B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
-            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
-              <span style="font-size:10px;color:#94A3B8">${time}</span>
-              <span class="msym" data-bm="${a.id}" onclick="toggleBookmark(${a.id}, event)"
-                style="font-size:16px;cursor:pointer;color:${isBookmarked ? '#2563EB' : '#CBD5E1'};transition:color 0.15s,transform 0.18s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
-                onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform=''"
-              >${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
-            </div>
-          </div>
-          <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:5px">${esc(a.title)}</div>
-          ${catTag(a.category)}
-          ${brief}
+    <div class="feed-card animate-in${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}" data-cat="${a.category||''}" style="animation-delay:${delay}ms">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <span style="font-size:9px;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;color:${cat.text};font-weight:600">${esc(cat.label)}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <span style="font-size:9px;font-family:var(--mono);color:var(--txt3)">${time}</span>
+          <span class="msym" data-bm="${a.id}" onclick="toggleBookmark(${a.id}, event)"
+            style="font-size:14px;cursor:pointer;color:${isBookmarked ? 'var(--acc)' : 'var(--txt3)'};transition:color 0.15s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
+          >${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
         </div>
       </div>
+      <div style="font-size:12.5px;font-family:var(--mono);font-weight:600;color:var(--txt);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px">${esc(a.title)}</div>
+      <div style="font-size:9px;font-family:var(--mono);color:var(--txt3)">${esc(name)}</div>
+      ${brief}
     </div>`;
   }).join('');
 }
 
-// ─── ARTICLE DETAIL ──────────────────────────────────────────────
+// ─── ARTICLE DETAIL ──────────────────────────────────────────
 async function selectArticle(id) {
   selectedId = id;
   document.querySelectorAll('.feed-card').forEach(el => {
     el.classList.toggle('selected', parseInt(el.dataset.id) === id);
   });
+
+  // 3D press on the clicked card
+  const clicked = document.querySelector(`.feed-card[data-id="${id}"]`);
+  if (clicked) {
+    clicked.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+    clicked.style.transform  = 'perspective(500px) translateZ(-8px) scale(0.96)';
+    clicked.style.boxShadow  = 'inset 0 2px 8px rgba(0,0,0,0.3)';
+    setTimeout(() => {
+      clicked.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease';
+      clicked.style.transform  = '';
+      clicked.style.boxShadow  = '';
+      setTimeout(() => { clicked.style.transition = ''; }, 350);
+    }, 110);
+  }
 
   const panel = document.getElementById('detail-panel');
   panel.innerHTML = `<div class="detail-content">${detailSkeleton()}</div>`;
@@ -781,96 +1276,91 @@ async function selectArticle(id) {
 }
 
 function sanitizeHtml(html) {
-  // Remove dangerous tags and their content entirely
   html = html.replace(/<(script|style|iframe|form|input|button|textarea|select|object|embed|applet|meta|link)[^>]*>[\s\S]*?<\/\1>/gi, '');
   html = html.replace(/<(script|style|iframe|form|input|button|textarea|select|object|embed|applet|meta|link)[^>]*\/?>/gi, '');
-  // Strip event handlers and javascript: URLs from remaining tags
   html = html.replace(/\s+on\w+="[^"]*"/gi, '');
   html = html.replace(/\s+on\w+='[^']*'/gi, '');
   html = html.replace(/href="javascript:[^"]*"/gi, 'href="#"');
-  // Wire links to open externally
   html = html.replace(/<a\s/gi, '<a target="_blank" ');
   return html;
 }
 
 function renderArticleBody(content, title) {
   if (!content) {
-    return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+    return `<p style="color:var(--txt3);font-style:italic">Full content available at the original source.</p>`;
   }
-
   const isHtml = /<[a-z][\s\S]*>/i.test(content);
-
   if (isHtml) {
     const safe = sanitizeHtml(content);
-    // Check it's not just the title wrapped in a tag
     const textOnly = safe.replace(/<[^>]+>/g, '').trim();
     if (!textOnly || textOnly === (title || '').trim()) {
-      return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+      return `<p style="color:var(--txt3);font-style:italic">Full content available at the original source.</p>`;
     }
     return safe;
   }
-
-  // Plain text — split into paragraphs
   const decoded = decodeHtml(content);
   const paras = decoded.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
   if (!paras.length || paras.join('') === (title || '').trim()) {
-    return `<p style="color:#94A3B8;font-style:italic">Full content available at the original source.</p>`;
+    return `<p style="color:var(--txt3);font-style:italic">Full content available at the original source.</p>`;
   }
   return paras.map(p => `<p>${esc(p)}</p>`).join('');
 }
 
 function renderDetail(a) {
-  const cat  = CAT[a.category] || { label: a.category||'Article', bg:'rgba(148,163,184,0.1)', text:'#94A3B8', border:'rgba(148,163,184,0.25)' };
+  const cat  = CAT[a.category] || { label: a.category||'Report', bg:'rgba(62,60,55,0.1)', text:'var(--txt3)', border:'rgba(62,60,55,0.2)' };
   const name = sourceLabel(a);
   const time = relativeTime(a.published_at || a.created_at);
   const url  = a.source_url || '';
-
-  const rawContent = (a.content || '').trim();
-  const bodyHtml = renderArticleBody(rawContent, a.title);
-
+  const bodyHtml = renderArticleBody((a.content || '').trim(), a.title);
   const isBookmarked = loadBookmarks().has(a.id);
+
   document.getElementById('detail-panel').innerHTML = `
   <div class="detail-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      ${catTag(a.category)}
-      <div style="display:flex;align-items:center;gap:6px">
-        ${url ? `<span class="msym" onclick="shareArticle('${esc(a.title.replace(/'/g,"\\\'"))}','${esc(url)}')"
-          style="font-size:22px;cursor:pointer;color:#CBD5E1;transition:color 0.15s,transform 0.2s"
-          onmouseover="this.style.color='#64748B';this.style.transform='scale(1.15)'" onmouseout="this.style.color='#CBD5E1';this.style.transform=''"
-          title="Share">ios_share</span>` : ''}
+    <div class="detail-section" style="animation-delay:0ms;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <span style="font-size:9px;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:${cat.text};font-weight:600">${esc(cat.label)}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${url ? `<span class="msym" onclick="shareArticle('${esc(a.title.replace(/'/g,"\\'"))}','${esc(url)}')"
+          style="font-size:18px;cursor:pointer;color:var(--txt3);transition:color 0.15s"
+          onmouseover="this.style.color='var(--txt2)'" onmouseout="this.style.color='var(--txt3)'"
+          >ios_share</span>` : ''}
         <span class="msym" data-bm="${a.id}" onclick="toggleBookmark(${a.id}, event)"
-          style="font-size:22px;cursor:pointer;color:${isBookmarked ? '#2563EB' : '#CBD5E1'};transition:color 0.15s,transform 0.2s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
-          onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform=''"
-          title="${isBookmarked ? 'Remove bookmark' : 'Bookmark'}"
+          style="font-size:18px;cursor:pointer;color:${isBookmarked ? 'var(--acc)' : 'var(--txt3)'};transition:color 0.15s;font-variation-settings:'FILL' ${isBookmarked ? 1 : 0}"
+          onmouseover="this.style.color='var(--txt2)'" onmouseout="this.style.color='${isBookmarked ? 'var(--acc)' : 'var(--txt3)'}'"
         >${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
       </div>
     </div>
-    <h1 style="font-size:24px;font-weight:800;color:#0F172A;line-height:1.3;letter-spacing:-0.3px;margin-bottom:18px">${esc(a.title)}</h1>
-    <div style="display:flex;align-items:center;gap:10px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #F0F4F8">
-      <img src="${avatarUrl(name, a.source)}" style="width:34px;height:34px;border-radius:50%;object-fit:cover"/>
+
+    <h1 class="detail-section" style="animation-delay:55ms;font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:700;color:var(--txt);line-height:1.25;margin-bottom:20px">${esc(a.title)}</h1>
+
+    <div class="detail-section" style="animation-delay:110ms;display:flex;align-items:center;gap:10px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--bdr)">
+      <img src="${avatarUrl(name, a.source)}" style="width:26px;height:26px;border-radius:2px;object-fit:cover;flex-shrink:0"/>
       <div>
-        <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(name)}</div>
-        <div style="font-size:11px;color:#64748B">${time}</div>
+        <div style="font-size:11px;font-weight:600;font-family:var(--mono);color:var(--txt)">${esc(name)}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--txt3)">${time}</div>
       </div>
     </div>
+
     ${a.ai_brief ? `
-    <div class="brief-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-        <span class="msym" style="font-size:14px;color:#2563EB">auto_awesome</span>
-        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#2563EB">AI Summary</span>
+    <div class="detail-section brief-card" style="animation-delay:165ms">
+      <div style="margin-bottom:9px">
+        <span style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.16em;text-transform:uppercase;color:var(--acc)">▸ Analyst Brief</span>
       </div>
-      <p style="font-size:13px;line-height:1.7;color:#475569">${esc(a.ai_brief)}</p>
+      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;line-height:1.72;color:var(--txt2);font-style:italic">${esc(a.ai_brief)}</p>
     </div>` : ''}
-    <div class="article-body">${bodyHtml}</div>
+
+    <div class="detail-section article-body" style="animation-delay:${a.ai_brief ? 220 : 165}ms">${bodyHtml}</div>
+
     ${url ? `
-    <button class="read-btn" onclick="openUrl('${esc(url)}')">
-      <span class="msym" style="font-size:16px">open_in_new</span>
-      Read Original Article
-    </button>` : ''}
+    <div class="detail-section" style="animation-delay:${a.ai_brief ? 275 : 220}ms">
+      <button class="read-btn" onclick="openUrl('${esc(url)}')">
+        <span class="msym" style="font-size:14px">open_in_new</span>
+        Read Original
+      </button>
+    </div>` : ''}
   </div>`;
 }
 
-// ─── DIGEST ──────────────────────────────────────────────────────
+// ─── DIGEST ──────────────────────────────────────────────────
 async function loadDigest() {
   document.getElementById('feed-list').innerHTML = skeletons();
   try {
@@ -899,39 +1389,36 @@ function renderDigest(groups) {
         .filter(g => g.articles.length > 0)
     : groups;
 
-  const total = filtered.reduce((n, g) => n + g.articles.length, 0);
-
-
   if (filtered.length === 0) {
     document.getElementById('feed-list').innerHTML = emptyMsg(searchQuery ? `No results for "${esc(searchQuery)}"` : 'No digest yet.');
     return;
   }
 
   document.getElementById('feed-list').innerHTML = filtered.map(group => {
-    const cat  = CAT[group.category] || { label: group.category, text:'#64748B', dot:'#64748B' };
+    const cat  = CAT[group.category] || { label: group.category, text:'var(--txt2)', dot:'var(--txt3)' };
     const rows = (group.articles || []).map(a => {
       const name     = sourceLabel(a);
       const time     = relativeTime(a.published_at || a.created_at);
       const selected = a.id === selectedId ? ' selected' : '';
       return `
-      <div class="feed-card${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}" style="padding:10px 14px">
-        <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px">${esc(a.title)}</div>
+      <div class="feed-card${selected}" onclick="selectArticle(${a.id})" data-id="${a.id}" data-cat="${a.category||''}" style="padding:11px 14px">
+        <div style="font-size:12px;font-family:var(--mono);font-weight:600;color:var(--txt);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px">${esc(a.title)}</div>
         <div style="display:flex;justify-content:space-between">
-          <span style="font-size:11px;color:#64748B">${esc(name)}</span>
-          <span style="font-size:10px;color:#94A3B8">${time}</span>
+          <span style="font-size:9px;font-family:var(--mono);color:var(--txt3)">${esc(name)}</span>
+          <span style="font-size:9px;font-family:var(--mono);color:var(--txt3)">${time}</span>
         </div>
       </div>`;
     }).join('');
     return `
     <div class="digest-section-header" style="color:${cat.text}">
-      <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${cat.dot};margin-right:6px;vertical-align:middle"></span>
-      ${cat.label} &nbsp;·&nbsp; ${group.articles.length}
+      <span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:${cat.dot};margin-right:6px;vertical-align:middle"></span>
+      ${cat.label} · ${group.articles.length}
     </div>
     ${rows}`;
   }).join('');
 }
 
-// ─── AUTHORS ─────────────────────────────────────────────────────
+// ─── AUTHORS ─────────────────────────────────────────────────
 async function loadAuthorsView() {
   const list = document.getElementById('feed-list');
   list.innerHTML = skeletons(3);
@@ -942,37 +1429,35 @@ async function loadAuthorsView() {
     const data    = await res.json();
     const authors = data.authors || [];
 
-
-
     list.innerHTML = `
-    <div style="padding:14px;border-bottom:1px solid #F0F4F8">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Following</div>
+    <div style="padding:12px;border-bottom:1px solid var(--bdr)">
+      <div style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px">Following</div>
       ${authors.length === 0
-        ? `<p style="font-size:12px;color:#64748B">Not following anyone yet.</p>`
+        ? `<p style="font-size:11px;font-family:var(--mono);color:var(--txt3)">No sources followed yet.</p>`
         : authors.map((a, i) => `
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i < authors.length-1 ? 'border-bottom:1px solid #F0F4F8' : ''}">
-          <img src="${avatarUrl(a.name,'substack')}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0"/>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i < authors.length-1 ? 'border-bottom:1px solid var(--bdr)' : ''}">
+          <img src="${avatarUrl(a.name,'substack')}" style="width:26px;height:26px;border-radius:2px;object-fit:cover;flex-shrink:0"/>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(a.name)}</div>
-            <div style="font-size:11px;color:#64748B">${esc(a.substack_slug)}.substack.com</div>
+            <div style="font-size:12px;font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;color:var(--txt)">${esc(a.name)}</div>
+            <div style="font-size:10px;font-family:var(--mono);color:var(--txt3)">${esc(a.substack_slug)}.substack.com</div>
           </div>
           <button onclick="unfollowAuthor(${a.id})"
-            style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE">
+            style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;padding:4px 9px;border-radius:2px;background:var(--elev);color:var(--txt2);border:1px solid var(--bdr2)">
             Unfollow
           </button>
         </div>`).join('')}
     </div>
-    <div style="padding:14px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Add Author</div>
-      <input id="new-name" type="text" placeholder="Name"
-        style="width:100%;background:#FFFFFF;border:1px solid #E8EDF3;border-radius:7px;padding:8px 10px;font-size:12px;color:#0F172A;display:block;margin-bottom:7px;outline:none"/>
+    <div style="padding:12px">
+      <div style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px">Add Source</div>
+      <input id="new-name" type="text" placeholder="Author name"
+        style="width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:2px;padding:7px 9px;font-size:11px;font-family:var(--mono);color:var(--txt);display:block;margin-bottom:6px;outline:none"/>
       <input id="new-slug" type="text" placeholder="Substack slug  (e.g. aaronparnas)"
-        style="width:100%;background:#FFFFFF;border:1px solid #E8EDF3;border-radius:7px;padding:8px 10px;font-size:12px;color:#0F172A;display:block;margin-bottom:10px;outline:none"/>
+        style="width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:2px;padding:7px 9px;font-size:11px;font-family:var(--mono);color:var(--txt);display:block;margin-bottom:8px;outline:none"/>
       <button onclick="addAuthor()"
-        style="width:100%;background:#2563EB;color:white;border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:600">
-        Follow Author
+        style="width:100%;background:var(--acc);color:#fff;border:none;border-radius:2px;padding:8px;font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer">
+        Follow Source
       </button>
-      <div id="author-msg" style="font-size:11px;margin-top:7px;color:#EF4444;min-height:16px"></div>
+      <div id="author-msg" style="font-size:10px;font-family:var(--mono);margin-top:6px;color:var(--acc);min-height:16px"></div>
     </div>`;
   } catch {
     list.innerHTML = errMsg('Could not load authors.');
@@ -1004,7 +1489,7 @@ async function addAuthor() {
   }
 }
 
-// ─── ALERTS ──────────────────────────────────────────────────────
+// ─── ALERTS ──────────────────────────────────────────────────
 function loadPrefs() { try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch { return {}; } }
 function savePrefs(p) { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); }
 function togglePref(el, key) {
@@ -1027,99 +1512,98 @@ async function loadAlertsView() {
   };
 
   const cats = [
-    { key:'cat_bills_votes',         label:'Bills & Votes',       icon:'how_to_vote',    color:'#60A5FA', defaultOn:true  },
-    { key:'cat_executive_orders',    label:'Executive Orders',    icon:'edit_document',  color:'#FCD34D', defaultOn:true  },
-    { key:'cat_court_rulings',       label:'Court Rulings',       icon:'gavel',          color:'#C4B5FD', defaultOn:false },
-    { key:'cat_government_spending', label:'Government Spending', icon:'account_balance', color:'#6EE7B7', defaultOn:false },
-    { key:'cat_opinion',             label:'Opinion',             icon:'rate_review',    color:'#FDA4AF', defaultOn:true  },
+    { key:'cat_bills_votes',         label:'Bills & Votes',       icon:'how_to_vote',     color:'#4B8EC8', defaultOn:true  },
+    { key:'cat_executive_orders',    label:'Executive Orders',    icon:'edit_document',   color:'#C8922B', defaultOn:true  },
+    { key:'cat_court_rulings',       label:'Court Rulings',       icon:'gavel',           color:'#8B6EC8', defaultOn:false },
+    { key:'cat_government_spending', label:'Government Spending', icon:'account_balance', color:'#3A9A6E', defaultOn:false },
+    { key:'cat_opinion',             label:'Opinion',             icon:'rate_review',     color:'#C86B8B', defaultOn:true  },
   ];
 
   list.innerHTML = `
-  <div style="padding:14px;border-bottom:1px solid #F0F4F8">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Authors</div>
+  <div style="padding:12px;border-bottom:1px solid var(--bdr)">
+    <div style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px">Authors</div>
     ${authors.length === 0
-      ? `<p style="font-size:12px;color:#64748B">No authors followed yet.</p>`
+      ? `<p style="font-size:11px;font-family:var(--mono);color:var(--txt3)">No authors followed yet.</p>`
       : authors.map((a,i) => `
-      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<authors.length-1?'border-bottom:1px solid #F0F4F8':''}">
-        <img src="${avatarUrl(a.name,'substack')}" style="width:26px;height:26px;border-radius:50%;object-fit:cover"/>
-        <span style="flex:1;font-size:12px;font-weight:500;color:#0F172A">${esc(a.name)}</span>
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<authors.length-1?'border-bottom:1px solid var(--bdr)':''}">
+        <img src="${avatarUrl(a.name,'substack')}" style="width:24px;height:24px;border-radius:2px;object-fit:cover"/>
+        <span style="flex:1;font-size:11px;font-family:var(--mono);color:var(--txt)">${esc(a.name)}</span>
         ${tog(`author_${a.id}`, true)}
       </div>`).join('')}
   </div>
-  <div style="padding:14px;border-bottom:1px solid #F0F4F8">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:10px">Topics</div>
+  <div style="padding:12px;border-bottom:1px solid var(--bdr)">
+    <div style="font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px">Topics</div>
     ${cats.map((c,i) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<cats.length-1?'border-bottom:1px solid #F0F4F8':''}">
-      <span class="msym" style="font-size:16px;color:${c.color}">${c.icon}</span>
-      <span style="flex:1;font-size:12px;font-weight:500;color:#0F172A">${c.label}</span>
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<cats.length-1?'border-bottom:1px solid var(--bdr)':''}">
+      <span class="msym" style="font-size:14px;color:${c.color}">${c.icon}</span>
+      <span style="flex:1;font-size:11px;font-family:var(--mono);color:var(--txt)">${c.label}</span>
       ${tog(c.key, c.defaultOn)}
     </div>`).join('')}
   </div>
-  <div style="padding:14px">
+  <div style="padding:12px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0">
       <div>
-        <div style="font-size:12px;font-weight:600;color:#0F172A;margin-bottom:2px">Daily Digest</div>
-        <div style="font-size:11px;color:#64748B">Morning summary at 6 AM</div>
+        <div style="font-size:11px;font-weight:600;font-family:var(--mono);color:var(--txt);margin-bottom:2px">Daily Brief</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--txt3)">Morning summary at 6 AM</div>
       </div>
       ${tog('pref_daily_digest', true)}
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;margin-top:4px">
       <div>
-        <div style="font-size:12px;font-weight:600;color:#0F172A;margin-bottom:2px">Breaking Alerts</div>
-        <div style="font-size:11px;color:#64748B">Major news regardless of filters</div>
+        <div style="font-size:11px;font-weight:600;font-family:var(--mono);color:var(--txt);margin-bottom:2px">Breaking Alerts</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--txt3)">Major news regardless of filters</div>
       </div>
       ${tog('pref_breaking', true)}
     </div>
   </div>`;
 }
 
-// ─── UI Helpers ──────────────────────────────────────────────────
+// ─── UI Helpers ──────────────────────────────────────────────
 function showEmptyDetail() {
   document.getElementById('detail-panel').innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px">
-      <svg width="52" height="52" viewBox="0 0 28 28" fill="none" opacity="0.15">
-        <rect width="28" height="28" rx="7" fill="#1D4ED8"/>
-        <path d="M5 14C8.5 9 19.5 9 23 14C19.5 19 8.5 19 5 14Z" fill="white"/>
-        <circle cx="14" cy="14" r="3.2" fill="#1E3A8A"/>
-        <circle cx="14" cy="14" r="1.6" fill="#0F172A"/>
-        <circle cx="12.8" cy="12.8" r="0.9" fill="white" opacity="0.75"/>
+      <svg width="38" height="38" viewBox="0 0 20 20" fill="none" opacity="0.1">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" stroke="#C1440E" stroke-width="1.5"/>
+        <path d="M3 10C5.5 6.8 14.5 6.8 17 10C14.5 13.2 5.5 13.2 3 10Z" fill="#C1440E"/>
+        <circle cx="10" cy="10" r="2.4" fill="#C1440E"/>
       </svg>
-      <p style="font-size:13px;color:#94A3B8;font-weight:500">Select an article to read</p>
+      <p style="font-size:9px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3)">Select a report to read</p>
     </div>`;
 }
 
 function skeletons(n = 6) {
   return Array.from({ length: n }, () => `
-    <div style="padding:12px 14px;border-bottom:1px solid #F0F4F8;background:#FFFFFF">
-      <div class="skeleton" style="height:11px;width:72px;margin-bottom:8px"></div>
-      <div class="skeleton" style="height:13px;width:100%;margin-bottom:5px"></div>
-      <div class="skeleton" style="height:13px;width:75%"></div>
+    <div style="padding:13px 14px;border-bottom:1px solid var(--bdr)">
+      <div class="skeleton" style="height:9px;width:68px;margin-bottom:7px"></div>
+      <div class="skeleton" style="height:14px;width:100%;margin-bottom:4px"></div>
+      <div class="skeleton" style="height:14px;width:68%"></div>
     </div>`).join('');
 }
 
 function emptyMsg(text) {
-  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px;color:#94A3B8;font-size:12px">
-    <span class="msym" style="font-size:26px;color:#94A3B8">inbox</span>${esc(text)}</div>`;
+  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px">
+    <span class="msym" style="font-size:22px;color:var(--txt3)">inbox</span>
+    <span style="font-size:9px;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3)">${esc(text)}</span>
+  </div>`;
 }
 
 function errMsg(text) {
-  return `<div style="margin:12px;padding:11px 13px;border-radius:8px;background:#FEF2F2;border:1px solid #FECACA;font-size:12px;color:#EF4444">${esc(text)}</div>`;
+  return `<div style="margin:12px;padding:10px 12px;border-left:2px solid var(--acc);background:var(--acc-bg);font-size:10px;font-family:var(--mono);color:var(--acc)">${esc(text)}</div>`;
 }
 
 function detailSkeleton() {
   return `
-    <div class="skeleton" style="height:16px;width:90px;margin-bottom:18px"></div>
-    <div class="skeleton" style="height:26px;width:95%;margin-bottom:8px"></div>
-    <div class="skeleton" style="height:26px;width:80%;margin-bottom:22px"></div>
-    <div class="skeleton" style="height:36px;width:160px;border-radius:50px;margin-bottom:22px"></div>
-    <div class="skeleton" style="height:80px;border-radius:10px;margin-bottom:22px"></div>
-    <div class="skeleton" style="height:14px;width:100%;margin-bottom:7px"></div>
-    <div class="skeleton" style="height:14px;width:92%;margin-bottom:7px"></div>
-    <div class="skeleton" style="height:14px;width:85%"></div>`;
+    <div class="skeleton" style="height:9px;width:80px;margin-bottom:16px"></div>
+    <div class="skeleton" style="height:26px;width:95%;margin-bottom:7px"></div>
+    <div class="skeleton" style="height:26px;width:78%;margin-bottom:24px"></div>
+    <div class="skeleton" style="height:34px;width:130px;border-radius:2px;margin-bottom:22px"></div>
+    <div class="skeleton" style="height:65px;border-radius:2px;margin-bottom:22px"></div>
+    <div class="skeleton" style="height:14px;width:100%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:14px;width:88%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:14px;width:74%"></div>`;
 }
 
-// ─── Init ────────────────────────────────────────────────────────
-// Intercept clicks on article body links → open in system browser
+// ─── Init ────────────────────────────────────────────────────
 document.getElementById('detail-panel').addEventListener('click', e => {
   const a = e.target.closest('a');
   if (a && a.href && !a.href.startsWith('#')) {
@@ -1131,32 +1615,28 @@ document.getElementById('detail-panel').addEventListener('click', e => {
 loadFeed();
 updateChipCounts();
 
-// ─── 3D Card Tilt ────────────────────────────────────────────────
+// ─── 3D Card Tilt ────────────────────────────────────────────
 const feedList = document.getElementById('feed-list');
 
 feedList.addEventListener('mousemove', e => {
   const card = e.target.closest('.feed-card');
   if (!card || card.classList.contains('selected')) return;
   const rect = card.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width  - 0.5;  // -0.5 to 0.5
+  const x = (e.clientX - rect.left) / rect.width  - 0.5;
   const y = (e.clientY - rect.top)  / rect.height - 0.5;
-  const rotY =  x * 8;   // max ±4deg
-  const rotX = -y * 5;   // max ±2.5deg
-  const glowX = 50 + x * 60;
-  const glowY = 50 + y * 60;
-  card.style.transform = `perspective(700px) rotateY(${rotY}deg) rotateX(${rotX}deg) translateZ(6px)`;
-  card.style.boxShadow = `${-x*8}px ${-y*6}px 20px rgba(37,99,235,0.1), inset 0 0 0 1px rgba(255,255,255,0.5)`;
-  card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(219,234,254,0.5) 0%, #FFFFFF 60%)`;
+  const rotY =  x * 5;
+  const rotX = -y * 3;
+  const glowX = 50 + x * 70;
+  const glowY = 50 + y * 70;
+  card.style.transform = `perspective(700px) rotateY(${rotY}deg) rotateX(${rotX}deg) translateZ(4px)`;
+  card.style.boxShadow = `${-x*6}px ${-y*4}px 18px rgba(193,68,14,0.06)`;
+  card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(193,68,14,0.05) 0%, var(--elev) 65%)`;
 });
 
 feedList.addEventListener('mouseleave', resetAllCards);
-
 feedList.addEventListener('mouseover', e => {
-  // Reset other cards when hovering a new one
   const card = e.target.closest('.feed-card');
-  document.querySelectorAll('.feed-card').forEach(c => {
-    if (c !== card) resetCard(c);
-  });
+  document.querySelectorAll('.feed-card').forEach(c => { if (c !== card) resetCard(c); });
 });
 
 function resetCard(card) {
@@ -1171,16 +1651,189 @@ function resetAllCards() {
   document.querySelectorAll('.feed-card').forEach(resetCard);
 }
 
-// ─── 3D Pill nav press ───────────────────────────────────────────
+// ─── Nav press feedback ──────────────────────────────────────
 document.querySelector('.pill-nav').addEventListener('mousedown', e => {
   const link = e.target.closest('.pill-link');
-  if (link) link.style.transform = 'perspective(400px) translateZ(-3px) scale(0.97)';
+  if (link) link.style.opacity = '0.6';
 });
 document.querySelector('.pill-nav').addEventListener('mouseup', e => {
   const link = e.target.closest('.pill-link');
-  if (link) { link.style.transform = ''; }
+  if (link) link.style.opacity = '';
 });
+
+// ─── 3D Background ────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const wrap   = canvas.parentElement;
+  const ctx    = canvas.getContext('2d');
+
+  let W, H, nodes, t = 0;
+  let ripples = [];
+  let mx = 0, my = 0;     // raw mouse coords in canvas space
+  let mnx = 0, mny = 0;   // normalised -0.5 → 0.5
+  let targetMnx = 0, targetMny = 0; // for smooth lerp
+
+  const NODE_COUNT  = 65;
+  const CONN_DIST   = 220;
+  const FOV         = 600;
+  const MOUSE_R     = 160;  // radius of mouse influence
+
+  function resize() {
+    W = canvas.width  = wrap.offsetWidth;
+    H = canvas.height = wrap.offsetHeight;
+  }
+
+  function initNodes() {
+    nodes = Array.from({ length: NODE_COUNT }, () => ({
+      x:  (Math.random() - 0.5) * 950,
+      y:  (Math.random() - 0.5) * 650,
+      z:  (Math.random() - 0.5) * 950,
+      vx: (Math.random() - 0.5) * 0.14,
+      vy: (Math.random() - 0.5) * 0.09,
+      vz: (Math.random() - 0.5) * 0.14,
+      size:   Math.random() < 0.12 ? 3.0 : 1.5,
+      accent: Math.random() < 0.14,
+    }));
+  }
+
+  function project(x, y, z) {
+    const scale = FOV / (FOV + z + 380);
+    return { sx: W / 2 + x * scale, sy: H / 2 + y * scale, scale };
+  }
+
+  // Track mouse on the wrap (events bubble from detail-panel content too)
+  wrap.addEventListener('mousemove', e => {
+    const rect = wrap.getBoundingClientRect();
+    mx  = e.clientX - rect.left;
+    my  = e.clientY - rect.top;
+    targetMnx = mx / W - 0.5;
+    targetMny = my / H - 0.5;
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    targetMnx = 0;
+    targetMny = 0;
+  });
+
+  // Click → ripple (only when clicking the canvas bg itself, not article content)
+  wrap.addEventListener('click', e => {
+    const rect = wrap.getBoundingClientRect();
+    ripples.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0 });
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.004;
+
+    // Smooth mouse lerp
+    mnx += (targetMnx - mnx) * 0.06;
+    mny += (targetMny - mny) * 0.06;
+
+    // Auto-rotate + mouse parallax
+    const rotY = t * 0.20 + mnx * 1.4;
+    const rotX = t * 0.09 - mny * 0.9;
+    const cy = Math.cos(rotY), sy = Math.sin(rotY);
+    const cx = Math.cos(rotX), sx = Math.sin(rotX);
+
+    const pts = nodes.map(n => {
+      n.x += n.vx; n.y += n.vy; n.z += n.vz;
+      if (Math.abs(n.x) > 500) n.vx *= -1;
+      if (Math.abs(n.y) > 340) n.vy *= -1;
+      if (Math.abs(n.z) > 500) n.vz *= -1;
+
+      const rx  = n.x * cy - n.z * sy;
+      const rz0 = n.x * sy + n.z * cy;
+      const ry  = n.y * cx - rz0 * sx;
+      const rz  = n.y * sx + rz0 * cx;
+
+      const p = project(rx, ry, rz);
+      const dm = Math.sqrt((p.sx - mx) ** 2 + (p.sy - my) ** 2);
+      p.hover  = Math.max(0, 1 - dm / MOUSE_R);
+      p.n      = n;
+      return p;
+    });
+
+    // Connections
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i];
+      for (let j = i + 1; j < pts.length; j++) {
+        const b  = pts[j];
+        const dx = a.sx - b.sx, dy = a.sy - b.sy;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d > CONN_DIST) continue;
+
+        const hoverBoost = Math.max(a.hover, b.hover);
+        const base  = (1 - d / CONN_DIST) * 0.45 * Math.min(a.scale, b.scale) * 3;
+        const alpha = Math.min(1, base + hoverBoost * 0.65);
+
+        ctx.beginPath();
+        ctx.moveTo(a.sx, a.sy);
+        ctx.lineTo(b.sx, b.sy);
+        ctx.strokeStyle = hoverBoost > 0.05
+          ? `rgba(160,120,80,${alpha.toFixed(3)})`
+          : `rgba(90,82,68,${alpha.toFixed(3)})`;
+        ctx.lineWidth = 0.8 + hoverBoost * 1.2;
+        ctx.stroke();
+      }
+    }
+
+    // Nodes
+    for (const p of pts) {
+      if (p.sx < -80 || p.sx > W + 80 || p.sy < -80 || p.sy > H + 80) continue;
+
+      const base  = Math.min(1, p.scale * 3.0);
+      const alpha = Math.min(1, (p.n.accent ? base * 0.9 : base * 0.65) + p.hover * 0.8);
+      const r     = p.n.size * p.scale * 2.8 + p.hover * 4;
+
+      // Glow for accents + hovered nodes
+      if (p.n.accent || p.hover > 0.05) {
+        ctx.shadowBlur  = (p.n.accent ? 14 : 0) + p.hover * 28;
+        ctx.shadowColor = p.n.accent ? 'rgba(193,68,14,0.8)' : 'rgba(180,140,90,0.6)';
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+      ctx.fillStyle = p.n.accent
+        ? `rgba(193,68,14,${alpha.toFixed(3)})`
+        : `rgba(110,100,82,${alpha.toFixed(3)})`;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Ripple rings
+    ripples = ripples.filter(r => r.r < 320);
+    for (const r of ripples) {
+      r.r += 4;
+      const progress = r.r / 320;
+      const alpha    = 0.75 * (1 - progress);
+
+      ctx.shadowBlur  = 8;
+      ctx.shadowColor = 'rgba(193,68,14,0.4)';
+
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(193,68,14,${alpha.toFixed(3)})`;
+      ctx.lineWidth   = 1.5;
+      ctx.stroke();
+
+      if (r.r > 40) {
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.r * 0.55, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(193,68,14,${(alpha * 0.35).toFixed(3)})`;
+        ctx.lineWidth   = 0.8;
+        ctx.stroke();
+      }
+
+      ctx.shadowBlur = 0;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  requestAnimationFrame(() => { resize(); initNodes(); draw(); });
+  window.addEventListener('resize', resize);
+})();
+// ─── End 3D background ────────────────────────────────────────
 </script>
-<div id="toast"></div>
 </body>
 </html>
